@@ -1,27 +1,45 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const TelegramBot = require('node-telegram-bot-api');
+const axios = require('axios');
+
 const app = express();
+const PORT = 3000;
 
-// Credenciais reais (conforme combinado)
-const token = '6867861914:AAGuSqPbBQuZVmCy1k59z5DZTOKLPOODkn0';
-const chatId = 5939797000;
+// CREDENCIAIS DO BOT (substitua pelas reais!)
+const BOT_TOKEN = '6382999891:AAEzO0Bz_MHEHAGoOeIhdFeqGZ-0xVcByMc';
+const CHAT_ID = '@WiFireBot'; // Ou use o ID numérico
 
-const bot = new TelegramBot(token);
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.post('/enviar', (req, res) => {
-  const numero = req.body.numero;
-  if (!numero) {
-    return res.status(400).send('Número não fornecido.');
-  }
-
-  const mensagem = `📲 Novo número cadastrado no WiFire Conecta:\n\nNúmero: ${numero}`;
-  bot.sendMessage(chatId, mensagem);
-  res.send('✅ Número enviado com sucesso para o Telegram!');
+// ROTA PRINCIPAL DE TESTE
+app.get('/', (req, res) => {
+  res.send('Servidor WiFireConecta rodando com sucesso!');
 });
 
-app.listen(3000, () => {
-  console.log('🚀 Servidor ativo: http://localhost:3000');
+// ROTA POST /enviar
+app.post('/enviar', async (req, res) => {
+  const numero = req.body.numero;
+
+  if (!numero) {
+    return res.status(400).json({ error: 'Número é obrigatório!' });
+  }
+
+  const mensagem = `✅ Novo número cadastrado no WiFire Conecta: ${numero}`;
+
+  try {
+    await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      chat_id: CHAT_ID,
+      text: mensagem
+    });
+
+    res.json({ success: true, mensagem });
+  } catch (err) {
+    console.error('Erro ao enviar para o Telegram:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Erro ao enviar mensagem para o Telegram' });
+  }
+});
+
+// Inicia o servidor
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
 });
