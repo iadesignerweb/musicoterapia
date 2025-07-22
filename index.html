@@ -1,54 +1,108 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>WiFire Conecta</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>Dashboard - WiFire Conecta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body {
+      margin: 0;
       background-color: #000;
       color: #0ff;
-      font-family: 'Arial', sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+      font-family: Arial, sans-serif;
     }
-    h1 {
-      font-size: 2em;
+
+    header {
+      background-color: #111;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      border-bottom: 1px solid #0ff;
+    }
+
+    main {
+      padding: 30px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .card {
+      background-color: #111;
+      border: 1px solid #0ff;
+      padding: 20px;
+      border-radius: 10px;
       margin-bottom: 20px;
     }
-    form {
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      color: #0ff;
+    }
+
+    th, td {
+      border: 1px solid #0ff;
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #022;
+    }
+
+    .chart-placeholder {
+      height: 200px;
+      background: #011;
       display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    input {
-      padding: 10px;
-      border: none;
-      border-radius: 5px;
-      font-size: 1em;
-    }
-    button {
-      padding: 10px;
-      background-color: #0ff;
-      color: #000;
-      border: none;
-      border-radius: 5px;
-      font-weight: bold;
-      cursor: pointer;
+      justify-content: center;
+      align-items: center;
+      color: #555;
+      border: 1px dashed #0ff;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
-  <h1>Conecte-se ao WiFire</h1>
-  <form id="wifiForm">
-    <input type="tel" id="phone" placeholder="Digite seu número" required />
-    <button type="submit">Conectar</button>
-  </form>
+  <header>📊 Dashboard - WiFire Conecta</header>
+  <main>
+    <div class="card">
+      <h2>📈 Gráfico de Conexões</h2>
+      <div class="chart-placeholder">Gráfico aqui (em breve)</div>
+    </div>
 
-  <script src="script.js"></script>
+    <div class="card">
+      <h2>📋 Últimos Acessos</h2>
+      <table id="tabela">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Número</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Linhas serão inseridas via JS -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    // ⚡ Simulação de dados - depois será via API
+    const acessos = [
+      { data: "22/07/2025 09:01", numero: "+5598987654321" },
+      { data: "22/07/2025 08:33", numero: "+5598965432109" },
+      { data: "21/07/2025 21:15", numero: "+5598998765432" }
+    ];
+
+    const tbody = document.querySelector("#tabela tbody");
+
+    acessos.forEach(({ data, numero }) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${data}</td><td>${numero}</td>`;
+      tbody.appendChild(row);
+    });
+  </script>
 </body>
 </html>
