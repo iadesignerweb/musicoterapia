@@ -1,44 +1,52 @@
-const express = require('express');
-const bodyParser = require('body-parser');
 const TelegramBot = require('node-telegram-bot-api');
-const cors = require('cors');
+const express = require('express');
+const fs = require('fs');
+const path = require('path');
 
-const app = express();
-const port = 3000;
-
-// Token do bot WiFire Conecta
 const token = '7581940581:AAH35oxpMuNWt9BXhJVYn_ZpiRlTADEnSfM';
-
-// Inicia o bot com polling
 const bot = new TelegramBot(token, { polling: true });
+const app = express();
+const PORT = 3000;
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Rota para receber número do site
-app.post('/login', (req, res) => {
-  const { phone } = req.body;
+// Banco de dados simples
+let users = [];
+const dbPath = path.join(__dirname, 'db.json');
 
-  if (!phone) {
-    return res.status(400).json({ error: 'Número não informado' });
-  }
+// Carregar db
+if (fs.existsSync(dbPath)) {
+  users = JSON.parse(fs.readFileSync(dbPath));
+}
 
-  // ID do administrador no Telegram
-  const adminChatId = '7581940581'; // O mesmo ID usado na criação
+// Salvar db
+function saveDB() {
+  fs.writeFileSync(dbPath, JSON.stringify(users, null, 2));
+}
 
-  bot.sendMessage(adminChatId, `📲 Novo login no WiFire Conecta:\nNúmero informado: ${phone}`);
+// Receber dados do formulário HTML
+app.post('/enviar', (req, res) => {
+  const numero = req.body.numero;
+  if (!numero) return res.status(400).send('Número inválido.');
 
-  return res.status(200).json({ status: 'sucesso', mensagem: 'Login enviado com sucesso' });
+  // Salvar no DB
+  const user = { numero, data: new Date().toISOString() };
+  users.push(user);
+  saveDB();
+
+  // Enviar mensagem no Telegram
+  bot.sendMessage(numero, `Olá! Você se conectou com sucesso ao WiFire Conecta.`);
+
+  return res.send({ status: 'ok' });
 });
 
-// Mensagem automática para quem envia algo pro bot
+// Bot escutando mensagens
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
-  bot.sendMessage(chatId, '✅ Conectado ao sistema WiFire Conecta.\nUse o site para se logar via número.');
+  bot.sendMessage(chatId, `Bem-vindo ao WiFire Conecta, ${msg.from.first_name || 'usuário'}!`);
 });
 
-// Inicia servidor
-app.listen(port, () => {
-  console.log(`🌐 Servidor ativo: http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Servidor Express rodando em http://localhost:${PORT}`);
 });
