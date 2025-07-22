@@ -1,52 +1,44 @@
-const TelegramBot = require('node-telegram-bot-api');
 const express = require('express');
-const fs = require('fs');
+const bodyParser = require('body-parser');
+const TelegramBot = require('node-telegram-bot-api');
+const cors = require('cors');
+
 const app = express();
+const port = 3000;
+
+// Token do bot WiFire Conecta
 const token = '7581940581:AAH35oxpMuNWt9BXhJVYn_ZpiRlTADEnSfM';
 
+// Inicia o bot com polling
 const bot = new TelegramBot(token, { polling: true });
-const PORT = 3000;
-const DB_FILE = 'db.json';
 
-// Inicializa o arquivo db.json se não existir
-if (!fs.existsSync(DB_FILE)) {
-  fs.writeFileSync(DB_FILE, JSON.stringify({ usuarios: [] }, null, 2));
-}
+// Middleware
+app.use(cors());
+app.use(bodyParser.json());
 
-// Utilitário para salvar usuário no db.json
-function salvarUsuario(numero, userId) {
-  const db = JSON.parse(fs.readFileSync(DB_FILE));
-  const existe = db.usuarios.find(u => u.numero === numero);
+// Rota para receber número do site
+app.post('/login', (req, res) => {
+  const { phone } = req.body;
 
-  if (!existe) {
-    db.usuarios.push({
-      numero,
-      telegram_id: userId,
-      data: new Date().toISOString()
-    });
-    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+  if (!phone) {
+    return res.status(400).json({ error: 'Número não informado' });
   }
-}
 
-// Mensagem de boas-vindas
-bot.onText(/\/start/, (msg) => {
-  const chatId = msg.chat.id;
-  bot.sendMessage(chatId, `Bem-vindo ao WiFire Conecta!
+  // ID do administrador no Telegram
+  const adminChatId = '7581940581'; // O mesmo ID usado na criação
 
-Digite apenas seu número de celular para liberar o acesso à rede Wi-Fi.
-Exemplo: 11988887777`);
+  bot.sendMessage(adminChatId, `📲 Novo login no WiFire Conecta:\nNúmero informado: ${phone}`);
+
+  return res.status(200).json({ status: 'sucesso', mensagem: 'Login enviado com sucesso' });
 });
 
-// Captura do número de celular
+// Mensagem automática para quem envia algo pro bot
 bot.on('message', (msg) => {
   const chatId = msg.chat.id;
-  const texto = msg.text;
+  bot.sendMessage(chatId, '✅ Conectado ao sistema WiFire Conecta.\nUse o site para se logar via número.');
+});
 
-  if (/^\d{10,13}$/.test(texto)) {
-    salvarUsuario(texto, chatId);
-
-    bot.sendMessage(chatId, `✅ Número registrado com sucesso!\nAguarde... você será redirecionado ou liberado para usar a rede.`);
-    
-    // Aqui você pode integrar com o front-end ou backend do sistema de hotspot
-  }
+// Inicia servidor
+app.listen(port, () => {
+  console.log(`🌐 Servidor ativo: http://localhost:${port}`);
 });
