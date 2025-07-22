@@ -1,72 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wifire Connect</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8">
+  <title>WiFire Conecta</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #000;
+      color: #0ff;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    input {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+    }
+    button {
+      padding: 10px;
+      background-color: #0ff;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <div class="logo">Wifire Connect</div>
-    <div class="menu-toggle" id="menu-toggle">&#9776;</div>
-    <nav class="menu" id="menu">
-      <ul>
-        <li><a href="#">Política de Cookies</a></li>
-        <li><a href="#">Sobre o Serviço</a></li>
-      </ul>
-    </nav>
-  </header>
+  <h1>Conecte-se ao WiFire</h1>
+  <form id="wifiForm">
+    <input type="tel" id="phone" placeholder="Digite seu número" required />
+    <button type="submit">Conectar</button>
+  </form>
 
-  <main>
-    <div class="login-box">
-      <h1>Conecte-se ao Wi-Fi</h1>
-      <p>Insira seu número de celular para continuar</p>
-      <form id="login-form">
-        <input type="tel" id="phone" name="phone" placeholder="(99) 99999-9999" required />
-        <button type="submit">Conectar</button>
-      </form>
-    </div>
-  </main>
-
-  <div class="popup" id="popup">
-    <div class="popup-content">
-      <h2>Privacidade</h2>
-      <p>Este sistema coleta apenas seu número de celular. Nenhum outro dado pessoal será armazenado ou compartilhado.</p>
-      <button onclick="closePopup()">Entendi</button>
-    </div>
-  </div>
-
-  <script>
-    const menuToggle = document.getElementById('menu-toggle');
-    const menu = document.getElementById('menu');
-    menuToggle.onclick = () => menu.classList.toggle('active');
-
-    function closePopup() {
-      document.getElementById("popup").style.display = "none";
-    }
-
-    window.onload = () => {
-      document.getElementById("popup").style.display = "flex";
-
-      document.getElementById("login-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const phone = document.getElementById("phone").value;
-
-        const response = await fetch("/api/login", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ phone }),
-        });
-
-        if (response.ok) {
-          alert("Conectado com sucesso!");
-          // Redirecionamento para página liberada
-        } else {
-          alert("Erro ao conectar.");
-        }
-      });
-    };
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
