@@ -1,36 +1,53 @@
 const express = require("express");
-const fs = require("fs");
-const path = require("path");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const TelegramBot = require("node-telegram-bot-api");
 
 const app = express();
 const PORT = 3000;
 
-// Config Bot Telegram
-const bot = new TelegramBot("SEU_TOKEN_AQUI", { polling: false });
-const ADMIN_ID = "SEU_CHAT_ID";
+// ✅ TOKEN DO BOT E CHAT_ID conforme sua autorização
+const BOT_TOKEN = "6696481505:AAEJa-rEOzF5i8iJKJwID7yxWlxMKGLlZNY";
+const CHAT_ID = "5287458186"; // Substituído com base em sua autorização
 
-// Middlewares
+const bot = new TelegramBot(BOT_TOKEN, { polling: false });
+
+app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "../public")));
 
-// Rota para login com celular
-app.post("/api/login", (req, res) => {
-  const { phone } = req.body;
-  if (!phone) return res.status(400).json({ error: "Número inválido" });
+// Armazenamento temporário dos acessos
+let acessos = [];
 
-  const db = JSON.parse(fs.readFileSync("db.json", "utf8"));
-  const now = new Date().toISOString();
-  db.push({ phone, timestamp: now });
-  fs.writeFileSync("db.json", JSON.stringify(db, null, 2));
+// 📲 Endpoint de registro de número
+app.post("/send", (req, res) => {
+  const { numero } = req.body;
 
-  // Notificar no Telegram
-  bot.sendMessage(ADMIN_ID, `📡 Novo cliente: ${phone}\n🕒 ${now}`);
+  if (!numero || typeof numero !== "string") {
+    return res.status(400).json({ erro: "Número inválido" });
+  }
 
-  res.status(200).json({ success: true });
+  const dataHora = new Date().toLocaleString("pt-BR");
+  const registro = { numero, data: dataHora };
+
+  acessos.push(registro);
+
+  // Envio da mensagem via Telegram
+  const mensagem = `📶 Novo Acesso WiFire Conecta\n📱 Número: ${numero}\n🕓 Data: ${dataHora}`;
+  bot.sendMessage(CHAT_ID, mensagem);
+
+  res.status(200).json({ sucesso: true, mensagem: "Número registrado com sucesso." });
 });
 
+// 📊 Endpoint para o Dashboard visualizar acessos recentes
+app.get("/acessos", (req, res) => {
+  const ultimos = acessos.slice(-30).reverse(); // Últimos 30 acessos
+  res.json(ultimos);
+});
+
+// 🌐 Servir arquivos do front-end
+app.use(express.static("public")); // dashboard.html deve estar dentro da pasta /public
+
+// 🔥 Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log(`✅ Servidor ativo em http://localhost:${PORT}`);
 });
