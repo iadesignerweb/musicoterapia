@@ -1,100 +1,103 @@
-body {
+/* Reset */
+* {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #000;
-  color: #fff;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #1C1C1C;
+  font-family: 'Antipasto', sans-serif;
+  color: #ffffff;
+  line-height: 1.6;
 }
 
 header {
-  background: #111;
-  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: #1C1C1C;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #333;
 }
 
 .logo {
-  font-size: 1.4rem;
-  font-weight: bold;
-}
-
-.menu-toggle {
+  color: #FFA500;
   font-size: 1.8rem;
-  cursor: pointer;
+  font-weight: 700;
 }
 
-.menu {
-  display: none;
-  position: absolute;
-  top: 60px;
-  right: 20px;
-  background: #222;
-  border-radius: 4px;
-  padding: 0.5rem;
+.menu a {
+  color: #fff;
+  margin-left: 1.5rem;
+  text-decoration: none;
+  font-weight: 300;
 }
 
-.menu.active {
+.menu a:hover {
+  color: #9B59B6;
+}
+
+.hero {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(to right, #1C1C1C, #222);
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  color: #FFA500;
+  font-weight: 400;
+}
+
+.hero p {
+  color: #ccc;
+  font-weight: 200;
+  margin-top: 1rem;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 4rem 2rem;
+  background: #1E1E1E;
+}
+
+.card {
+  background: #292929;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card .icon {
+  font-size: 2.5rem;
+  color: #9B59B6;
+  margin-bottom: 1rem;
   display: block;
 }
 
-.menu ul {
-  list-style: none;
-  padding: 0;
+.card h2 {
+  color: #FFA500;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
 }
 
-.menu ul li {
-  margin: 0.5rem 0;
+.card p {
+  color: #ccc;
+  font-size: 0.95rem;
 }
 
-.menu ul li a {
-  color: #fff;
-  text-decoration: none;
-}
-
-main {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 80vh;
-}
-
-.login-box {
+footer {
+  background: #121212;
+  color: #aaa;
   text-align: center;
-}
-
-input[type="tel"] {
-  padding: 0.5rem;
-  width: 80%;
-  margin-top: 1rem;
-  border: none;
-  border-radius: 4px;
-}
-
-button {
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 4px;
-  background-color: #ff5500;
-  color: white;
-  cursor: pointer;
-}
-
-.popup {
-  display: none;
-  position: fixed;
-  background: rgba(0,0,0,0.7);
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  justify-content: center;
-  align-items: center;
-}
-
-.popup-content {
-  background: #222;
-  padding: 2rem;
-  border-radius: 6px;
-  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
 }
