@@ -4,23 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WiFire Conecta</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
   <style>
     :root {
-      --grafite: #1c1c1c;
-      --laranja: #ff6f00;
-      --roxo-suave: #a678f2;
-      --branco: #ffffff;
-      --cinza-claro: #f0f0f0;
+      --grafite: #1C1C1C;
+      --laranja: #FF6A00;
+      --purpura: #A259FF;
+      --branco: #F4F4F4;
+      --fonte: 'Antipasto', sans-serif;
     }
 
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: 'Antipasto', sans-serif;
+      font-family: var(--fonte);
     }
 
     body {
@@ -37,26 +36,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      border-bottom: 1px solid var(--purpura);
     }
 
     .logo {
       font-size: 1.8rem;
-      font-weight: 700;
+      font-weight: bold;
       color: var(--laranja);
-    }
-
-    .menu-toggle {
-      display: none;
-      flex-direction: column;
-      cursor: pointer;
-    }
-
-    .menu-toggle span {
-      background: var(--branco);
-      margin: 4px;
-      width: 25px;
-      height: 3px;
-      border-radius: 2px;
     }
 
     nav {
@@ -65,73 +51,72 @@
     }
 
     nav a {
-      color: var(--roxo-suave);
+      color: var(--branco);
       text-decoration: none;
-      font-size: 1rem;
-      transition: color 0.3s ease;
+      font-weight: 300;
+      transition: color 0.3s;
     }
 
     nav a:hover {
-      color: var(--laranja);
+      color: var(--purpura);
     }
 
-    .hero {
+    .menu-mobile {
+      display: none;
+      font-size: 1.5rem;
+      color: var(--branco);
+    }
+
+    main {
       flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      padding: 3rem 2rem;
-      text-align: center;
+      padding: 2rem;
+      animation: fadeIn 1.5s ease-in-out;
     }
 
-    .hero h1 {
+    h1 {
       font-size: 2.5rem;
       color: var(--laranja);
+      font-weight: 700;
       margin-bottom: 1rem;
     }
 
-    .hero p {
-      font-size: 1.2rem;
-      max-width: 700px;
-      color: var(--cinza-claro);
+    h2 {
+      font-size: 1.3rem;
+      color: var(--purpura);
+      font-weight: 400;
+      margin-bottom: 2rem;
     }
 
-    .icons {
-      margin-top: 2rem;
-      display: flex;
-      gap: 2rem;
-      justify-content: center;
-    }
-
-    .icons svg {
-      width: 40px;
-      height: 40px;
-      fill: var(--roxo-suave);
-      transition: fill 0.3s;
-    }
-
-    .icons svg:hover {
-      fill: var(--laranja);
+    p {
+      font-weight: 200;
+      line-height: 1.6;
+      font-size: 1rem;
+      color: var(--branco);
     }
 
     footer {
+      background-color: #121212;
+      color: #aaa;
       text-align: center;
       padding: 1rem;
-      background-color: #111;
       font-size: 0.9rem;
-      color: var(--cinza-claro);
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(10px); }
+      100% { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 768px) {
       nav {
         display: none;
         flex-direction: column;
-        background: #111;
+        gap: 1rem;
+        background: var(--grafite);
         position: absolute;
-        top: 70px;
+        top: 60px;
         right: 0;
-        width: 200px;
+        width: 100%;
         padding: 1rem;
       }
 
@@ -139,8 +124,9 @@
         display: flex;
       }
 
-      .menu-toggle {
-        display: flex;
+      .menu-mobile {
+        display: block;
+        cursor: pointer;
       }
     }
   </style>
@@ -148,40 +134,29 @@
 <body>
   <header>
     <div class="logo">WiFire Conecta</div>
-    <div class="menu-toggle" onclick="toggleMenu()">
-      <span></span>
-      <span></span>
-      <span></span>
-    </div>
-    <nav id="menu">
+    <i class="fas fa-bars menu-mobile" onclick="toggleMenu()"></i>
+    <nav id="nav-menu">
       <a href="#">Suporte</a>
       <a href="#">Serviços</a>
       <a href="#">Produtos</a>
     </nav>
   </header>
 
-  <main class="hero">
+  <main>
     <h1>Conecte. Engaje. Converta.</h1>
-    <p>Transforme seu Wi-Fi em uma poderosa ferramenta de marketing com integração direta ao Telegram Bot.</p>
-
-    <div class="icons">
-      <!-- ícones SVG simples -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm1 17.9v-2.2h-2v2.2c-3.6-.5-6.4-3.4-6.9-7h2.2v-2H4.1C4.6 7.4 7.4 4.6 11 4.1V6.3h2V4.1c3.6.5 6.4 3.3 6.9 6.9h-2.2v2h2.2c-.5 3.6-3.3 6.5-6.9 7z"/>
-      </svg>
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 14h-4v4h-4v-4H6v-4h4V8h4v4h4v4z"/>
-      </svg>
-    </div>
+    <h2>Marketing inteligente via Wi-Fi + Bot Telegram</h2>
+    <p>
+      O WiFire Conecta transforma conexões em oportunidades. Acesse um painel moderno, envie mensagens automáticas e monitore interações com facilidade.
+    </p>
   </main>
 
   <footer>
-    @WiFire Conecta - Todos os direitos reservados.
+    © @WiFire Conecta - Todos os direitos reservados.
   </footer>
 
   <script>
     function toggleMenu() {
-      const menu = document.getElementById('menu');
+      const menu = document.getElementById('nav-menu');
       menu.classList.toggle('active');
     }
   </script>
