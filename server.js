@@ -1,49 +1,38 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const axios = require('axios');
+const path = require('path');
+require('dotenv').config();
+const { Telegraf } = require('telegraf');
 
 const app = express();
-const PORT = 3000;
-
-// CREDENCIAIS DO BOT DO TELEGRAM — já preenchidas como combinado
-const BOT_TOKEN = '6382999891:AAEzO0Bz_MHEHAGoOeIhdFeqGZ-0xVcByMc';
-const CHAT_ID = '@WiFireBot'; // OU coloque o número do seu chat_id
+const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
+const PORT = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
-// ROTA RAIZ (só para testar se o servidor está vivo)
-app.get('/', (req, res) => {
-  res.send('Servidor ativo!');
-});
+app.post('/conectar', async (req, res) => {
+  const { numero } = req.body;
+  if (!numero) return res.status(400).json({ message: 'Número não fornecido.' });
 
-// ROTA /enviar — RECEBE O NÚMERO E ENVIA PARA O TELEGRAM
-app.post('/enviar', async (req, res) => {
-  const numero = req.body.numero;
-
-  if (!numero) {
-    return res.status(400).json({ error: 'Número é obrigatório!' });
-  }
-
-  const mensagem = `✅ Novo número cadastrado no WiFire Conecta: ${numero}`;
-
+  const msg = `📲 Novo login WiFi!\nNúmero: ${numero}`;
   try {
-    const resposta = await axios.post(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-      chat_id: CHAT_ID,
-      text: mensagem,
-    });
-
-    return res.status(200).json({
-      success: true,
-      mensagem: 'Enviado ao Telegram com sucesso!',
-      telegram_response: resposta.data,
-    });
-  } catch (erro) {
-    console.error('Erro ao enviar para Telegram:', erro.response?.data || erro.message);
-    return res.status(500).json({ error: 'Falha ao enviar mensagem ao Telegram' });
+    await bot.telegram.sendMessage(process.env.CHAT_ID, msg);
+    res.json({ message: 'Número enviado com sucesso!' });
+  } catch (err) {
+    console.error('Erro ao enviar para o bot:', err);
+    res.status(500).json({ message: 'Erro ao enviar para o Telegram.' });
   }
 });
 
-// INICIA O SERVIDOR
+bot.launch()
+  .then(() => console.log('🤖 Bot Telegram iniciado com sucesso!'))
+  .catch(err => console.error('Erro ao iniciar o bot:', err));
+
+setInterval(() => {
+  console.log('🔄 Servidor ativo...');
+}, 30000);
+
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+  console.log(`🌐 Servidor rodando em http://localhost:${PORT}`);
 });
