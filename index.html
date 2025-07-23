@@ -4,47 +4,186 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WiFire Conecta</title>
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Antipasto:wght@200;400;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --grafite: #1c1c1c;
+      --laranja: #ff6f00;
+      --roxo-suave: #a678f2;
+      --branco: #ffffff;
+      --cinza-claro: #f0f0f0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Antipasto', sans-serif;
+    }
+
+    body {
+      background-color: var(--grafite);
+      color: var(--branco);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--grafite);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--laranja);
+    }
+
+    .menu-toggle {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+
+    .menu-toggle span {
+      background: var(--branco);
+      margin: 4px;
+      width: 25px;
+      height: 3px;
+      border-radius: 2px;
+    }
+
+    nav {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav a {
+      color: var(--roxo-suave);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--laranja);
+    }
+
+    .hero {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      color: var(--laranja);
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      max-width: 700px;
+      color: var(--cinza-claro);
+    }
+
+    .icons {
+      margin-top: 2rem;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+    }
+
+    .icons svg {
+      width: 40px;
+      height: 40px;
+      fill: var(--roxo-suave);
+      transition: fill 0.3s;
+    }
+
+    .icons svg:hover {
+      fill: var(--laranja);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background-color: #111;
+      font-size: 0.9rem;
+      color: var(--cinza-claro);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        display: none;
+        flex-direction: column;
+        background: #111;
+        position: absolute;
+        top: 70px;
+        right: 0;
+        width: 200px;
+        padding: 1rem;
+      }
+
+      nav.active {
+        display: flex;
+      }
+
+      .menu-toggle {
+        display: flex;
+      }
+    }
+  </style>
 </head>
 <body>
   <header>
     <div class="logo">WiFire Conecta</div>
-    <nav class="menu">
+    <div class="menu-toggle" onclick="toggleMenu()">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+    <nav id="menu">
+      <a href="#">Suporte</a>
       <a href="#">Serviços</a>
       <a href="#">Produtos</a>
-      <a href="#">Suporte</a>
     </nav>
   </header>
 
-  <main>
-    <section class="hero">
-      <h1>Conecte Clientes. Potencialize Resultados.</h1>
-      <p>Sistema de Wi-Fi Marketing com integração instantânea ao Telegram Bot.</p>
-    </section>
+  <main class="hero">
+    <h1>Conecte. Engaje. Converta.</h1>
+    <p>Transforme seu Wi-Fi em uma poderosa ferramenta de marketing com integração direta ao Telegram Bot.</p>
 
-    <section class="features">
-      <div class="card">
-        <span class="icon">📡</span>
-        <h2>Login Inteligente</h2>
-        <p>Identifique seus visitantes por número de celular ou redes sociais com segurança.</p>
-      </div>
-      <div class="card">
-        <span class="icon">📈</span>
-        <h2>Dashboard em Tempo Real</h2>
-        <p>Visualize e gerencie acessos, notificações e dados diretamente pelo painel.</p>
-      </div>
-      <div class="card">
-        <span class="icon">🤖</span>
-        <h2>Integração com Telegram Bot</h2>
-        <p>Receba alertas, cadastros e relatórios direto no seu app favorito.</p>
-      </div>
-    </section>
+    <div class="icons">
+      <!-- ícones SVG simples -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm1 17.9v-2.2h-2v2.2c-3.6-.5-6.4-3.4-6.9-7h2.2v-2H4.1C4.6 7.4 7.4 4.6 11 4.1V6.3h2V4.1c3.6.5 6.4 3.3 6.9 6.9h-2.2v2h2.2c-.5 3.6-3.3 6.5-6.9 7z"/>
+      </svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 14h-4v4h-4v-4H6v-4h4V8h4v4h4v4z"/>
+      </svg>
+    </div>
   </main>
 
   <footer>
-    <p>@WiFire Conecta - Todos os direitos reservados.</p>
+    @WiFire Conecta - Todos os direitos reservados.
   </footer>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('menu');
+      menu.classList.toggle('active');
+    }
+  </script>
 </body>
 </html>
