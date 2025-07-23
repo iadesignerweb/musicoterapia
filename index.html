@@ -1,112 +1,112 @@
 <!DOCTYPE html><html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>WiFire Conecta</title>  <!-- Fonte alternativa parecida com Antipasto -->  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;400;700&display=swap" rel="stylesheet" />  <style>
-    :root {
-      --grafite: #1C1C1C;
-      --laranja: #FF6F00;
-      --roxo: #6A1B9A;
-      --branco: #ffffff;
-      --fonte: 'Exo 2', sans-serif;
-    }
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WiFire Conecta - Acesso Administrativo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap" rel="stylesheet" />
+  <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: var(--fonte);
-      background-color: var(--grafite);
-      color: var(--branco);
+      font-family: 'Antipasto', sans-serif;
+      background: linear-gradient(to right, #0b0b0b, #3a003a);
+      color: white;
       display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      background-color: var(--grafite);
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
-      border-bottom: 2px solid var(--roxo);
+      height: 100vh;
     }
-
-    header h1 {
-      color: var(--laranja);
-      font-weight: 700;
-      font-size: 1.8rem;
+    .container {
+      text-align: center;
     }
-
-    nav a {
-      margin-left: 1.5rem;
-      color: var(--branco);
-      text-decoration: none;
-      font-weight: 200;
-      font-size: 0.95rem;
+    .admin-btn {
+      padding: 1rem 2rem;
+      background: #6a1b9a;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.3s;
     }
-
-    nav a:hover {
-      color: var(--laranja);
+    .admin-btn:hover {
+      background: #8e24aa;
     }
-
-    main {
-      flex: 1;
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .popup-content {
+      background: #1c1c1c;
       padding: 2rem;
+      border-radius: 20px;
       text-align: center;
-      animation: fadeIn 1.5s ease-in-out;
+      box-shadow: 0 0 20px rgba(106, 27, 154, 0.7);
     }
-
-    main h2 {
-      font-weight: 200;
-      font-size: 1.6rem;
-      color: var(--roxo);
-    }
-
-    main p {
-      font-weight: 200;
+    .popup input {
+      padding: 0.7rem;
+      width: 80%;
+      border-radius: 10px;
+      border: none;
+      margin-top: 1rem;
       font-size: 1rem;
-      color: var(--branco);
-      max-width: 700px;
-      margin: 1rem auto;
     }
-
-    footer {
-      background-color: #111;
-      color: #777;
-      text-align: center;
-      font-size: 0.8rem;
-      padding: 1rem;
+    .popup button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      background: #6a1b9a;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
     }
-
-    @keyframes fadeIn {
-      0% {opacity: 0; transform: translateY(20px);}
-      100% {opacity: 1; transform: translateY(0);}
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
     }
-
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      nav {
-        margin-top: 0.5rem;
-      }
+    .error {
+      color: red;
+      margin-top: 10px;
     }
-  </style></head>
+  </style>
+</head>
 <body>
-  <header>
-    <h1>WiFire Conecta</h1>
-    <nav>
-      <a href="#">Suporte</a>
-      <a href="#">Serviços</a>
-      <a href="#">Produtos</a>
-    </nav>
-  </header>  <main>
-    <h2>Transformando Conexão em Oportunidades</h2>
-    <p>Seja bem-vindo ao WiFire Conecta, a ponte entre sua marca e o mundo digital. Nosso sistema une conectividade Wi-Fi com engajamento inteligente via Telegram Bot.</p>
-  </main>  <footer>
-    © @WiFire Conecta - Todos os direitos reservados.
-  </footer>
-</body>
+  <div class="container">
+    <button class="admin-btn" onclick="openPopup()">Acesso Administrativo</button>
+  </div>  <div class="popup" id="popup">
+    <div class="popup-content">
+      <div class="close-btn" onclick="closePopup()">&times;</div>
+      <h2>Área Administrativa</h2>
+      <input type="password" id="adminPass" placeholder="Digite a senha" />
+      <button onclick="checkPassword()">Acessar</button>
+      <p class="error" id="errorText"></p>
+    </div>
+  </div>  <script>
+    const correctPassword = "wifire2025";
+    function openPopup() {
+      document.getElementById("popup").style.display = "flex";
+    }
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+      document.getElementById("errorText").textContent = "";
+    }
+    function checkPassword() {
+      const input = document.getElementById("adminPass").value;
+      if (input === correctPassword) {
+        window.location.href = "admin-dashboard.html";
+      } else {
+        document.getElementById("errorText").textContent = "Senha incorreta!";
+      }
+    }
+  </script></body>
 </html>
