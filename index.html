@@ -1,28 +1,20 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WiFire Conecta</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
-  <style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WiFire Conecta</title>  <!-- Fonte alternativa parecida com Antipasto -->  <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@200;400;700&display=swap" rel="stylesheet" />  <style>
     :root {
       --grafite: #1C1C1C;
-      --laranja: #FF6A00;
-      --purpura: #A259FF;
-      --branco: #F4F4F4;
-      --fonte: 'Antipasto', sans-serif;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: var(--fonte);
+      --laranja: #FF6F00;
+      --roxo: #6A1B9A;
+      --branco: #ffffff;
+      --fonte: 'Exo 2', sans-serif;
     }
 
     body {
+      margin: 0;
+      padding: 0;
+      font-family: var(--fonte);
       background-color: var(--grafite);
       color: var(--branco);
       display: flex;
@@ -36,129 +28,85 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--purpura);
+      border-bottom: 2px solid var(--roxo);
     }
 
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
+    header h1 {
       color: var(--laranja);
-    }
-
-    nav {
-      display: flex;
-      gap: 1.5rem;
+      font-weight: 700;
+      font-size: 1.8rem;
     }
 
     nav a {
+      margin-left: 1.5rem;
       color: var(--branco);
       text-decoration: none;
-      font-weight: 300;
-      transition: color 0.3s;
+      font-weight: 200;
+      font-size: 0.95rem;
     }
 
     nav a:hover {
-      color: var(--purpura);
-    }
-
-    .menu-mobile {
-      display: none;
-      font-size: 1.5rem;
-      color: var(--branco);
+      color: var(--laranja);
     }
 
     main {
       flex: 1;
       padding: 2rem;
+      text-align: center;
       animation: fadeIn 1.5s ease-in-out;
     }
 
-    h1 {
-      font-size: 2.5rem;
-      color: var(--laranja);
-      font-weight: 700;
-      margin-bottom: 1rem;
-    }
-
-    h2 {
-      font-size: 1.3rem;
-      color: var(--purpura);
-      font-weight: 400;
-      margin-bottom: 2rem;
-    }
-
-    p {
+    main h2 {
       font-weight: 200;
-      line-height: 1.6;
+      font-size: 1.6rem;
+      color: var(--roxo);
+    }
+
+    main p {
+      font-weight: 200;
       font-size: 1rem;
       color: var(--branco);
+      max-width: 700px;
+      margin: 1rem auto;
     }
 
     footer {
-      background-color: #121212;
-      color: #aaa;
+      background-color: #111;
+      color: #777;
       text-align: center;
+      font-size: 0.8rem;
       padding: 1rem;
-      font-size: 0.9rem;
     }
 
     @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
+      0% {opacity: 0; transform: translateY(20px);}
+      100% {opacity: 1; transform: translateY(0);}
     }
 
-    @media (max-width: 768px) {
-      nav {
-        display: none;
+    @media (max-width: 600px) {
+      header {
         flex-direction: column;
-        gap: 1rem;
-        background: var(--grafite);
-        position: absolute;
-        top: 60px;
-        right: 0;
-        width: 100%;
-        padding: 1rem;
+        align-items: flex-start;
       }
 
-      nav.active {
-        display: flex;
-      }
-
-      .menu-mobile {
-        display: block;
-        cursor: pointer;
+      nav {
+        margin-top: 0.5rem;
       }
     }
-  </style>
-</head>
+  </style></head>
 <body>
   <header>
-    <div class="logo">WiFire Conecta</div>
-    <i class="fas fa-bars menu-mobile" onclick="toggleMenu()"></i>
-    <nav id="nav-menu">
+    <h1>WiFire Conecta</h1>
+    <nav>
       <a href="#">Suporte</a>
       <a href="#">Serviços</a>
       <a href="#">Produtos</a>
     </nav>
-  </header>
-
-  <main>
-    <h1>Conecte. Engaje. Converta.</h1>
-    <h2>Marketing inteligente via Wi-Fi + Bot Telegram</h2>
-    <p>
-      O WiFire Conecta transforma conexões em oportunidades. Acesse um painel moderno, envie mensagens automáticas e monitore interações com facilidade.
-    </p>
-  </main>
-
-  <footer>
+  </header>  <main>
+    <h2>Transformando Conexão em Oportunidades</h2>
+    <p>Seja bem-vindo ao WiFire Conecta, a ponte entre sua marca e o mundo digital. Nosso sistema une conectividade Wi-Fi com engajamento inteligente via Telegram Bot.</p>
+  </main>  <footer>
     © @WiFire Conecta - Todos os direitos reservados.
   </footer>
-
-  <script>
-    function toggleMenu() {
-      const menu = document.getElementById('nav-menu');
-      menu.classList.toggle('active');
-    }
-  </script>
 </body>
 </html>
