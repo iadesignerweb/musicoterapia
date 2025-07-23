@@ -4,65 +4,36 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WiFire Conecta</title>
-  <style>
-    body {
-      background-color: #000;
-      color: #0ff;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: #111;
-      padding: 20px;
-      border: 2px solid #0ff;
-      border-radius: 10px;
-    }
-    input {
-      padding: 10px;
-      border-radius: 5px;
-      border: none;
-      outline: none;
-    }
-    button {
-      padding: 10px;
-      background-color: #0ff;
-      border: none;
-      cursor: pointer;
-      color: #000;
-      font-weight: bold;
-      border-radius: 5px;
-    }
-  </style>
+  <link href="style.css" rel="stylesheet">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
-  <h1>Bem-vindo ao WiFire Conecta</h1>
-  <form id="wifiForm">
-    <input type="tel" name="numero" placeholder="Digite seu número de celular" required />
-    <button type="submit">Conectar ao WiFi</button>
-  </form>
+  <header>
+    <h1 class="titulo">WiFire Conecta</h1>
+    <nav>
+      <ul class="menu">
+        <li><a href="#">Suporte</a></li>
+        <li><a href="#">Serviços</a></li>
+        <li><a href="#">Produtos</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <script>
-    const form = document.getElementById('wifiForm');
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const numero = form.numero.value;
-      const response = await fetch('/conectar', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ numero })
-      });
-      const result = await response.json();
-      alert(result.message || 'Solicitação enviada!');
-    });
-  </script>
+  <main>
+    <section class="login">
+      <h2>Conecte-se ao WiFi</h2>
+      <form id="loginForm">
+        <input type="text" id="phone" name="phone" placeholder="Digite seu número com DDD" required>
+        <button type="submit">Conectar</button>
+      </form>
+      <p id="response"></p>
+    </section>
+  </main>
+
+  <footer>
+    <p>@WiFire Conecta - Todos os direitos reservados.</p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 </html>
