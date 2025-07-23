@@ -1,120 +1,163 @@
-<!DOCTYPE html><html lang="pt-br">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WiFire Conecta - Painel Administrativo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap" rel="stylesheet" />
+  <title>WiFire - Painel Administrativo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap" rel="stylesheet">
   <style>
     body {
-      margin: 0;
       font-family: 'Antipasto', sans-serif;
-      background: linear-gradient(to bottom right, #000000, #330033);
-      color: white;
+      background-color: #121212;
+      color: #f1f1f1;
+      margin: 0;
+      padding: 0;
     }
-    .header {
-      background-color: #660066;
+    header {
+      background-color: #2e003e;
       padding: 1rem;
       text-align: center;
-      font-size: 2rem;
+      font-size: 1.8rem;
       font-weight: bold;
     }
-    .admin-box {
-      max-width: 500px;
-      margin: 2rem auto;
-      background-color: #1a1a1a;
+    .container {
       padding: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 0 15px rgba(255, 0, 255, 0.3);
     }
-    input, button {
-      width: 100%;
-      padding: 1rem;
-      margin-top: 1rem;
+    .admin-btn {
+      background-color: #6a0dad;
       border: none;
-      border-radius: 0.5rem;
+      color: white;
+      padding: 10px 20px;
       font-size: 1rem;
-    }
-    input {
-      background: #333;
-      color: white;
-    }
-    button {
-      background: #9900cc;
-      color: white;
       cursor: pointer;
-    }
-    button:hover {
-      background: #cc00ff;
+      border-radius: 8px;
     }
     .popup {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background-color: rgba(0, 0, 0, 0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-    .popup-content {
-      background: #1a1a1a;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #1e1e1e;
       padding: 2rem;
-      border-radius: 1rem;
-      text-align: center;
-      box-shadow: 0 0 20px #ff00ff;
+      border: 2px solid #6a0dad;
+      border-radius: 12px;
+      z-index: 9999;
     }
-    .popup-content button {
+    .popup h2 {
+      margin-top: 0;
+      color: #ff4e4e;
+    }
+    .popup input {
+      padding: 0.5rem;
       margin-top: 1rem;
+      width: 100%;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .popup button {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+      background: #6a0dad;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      color: white;
+      cursor: pointer;
+      font-size: 1.2rem;
     }
     .dashboard {
       display: none;
-      padding: 2rem;
+      margin-top: 2rem;
+    }
+    .user-card {
+      background: #1f1f1f;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-left: 5px solid #6a0dad;
+      border-radius: 10px;
+    }
+    .user-card button {
+      margin-top: 0.5rem;
+      padding: 5px 10px;
+      background: #6a0dad;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="header">WiFire Conecta - Acesso Administrativo</div>  <div class="admin-box">
-    <button onclick="mostrarPopup()">Acesso Administrativo</button>
-  </div>  <div class="popup" id="popup">
-    <div class="popup-content">
-      <h2>Área administrativa</h2>
-      <button onclick="fecharPopup()">X</button>
-      <input type="password" id="senha" placeholder="Digite a senha de administrador" />
-      <button onclick="verificarSenha()">Acessar</button>
-    </div>
-  </div>  <div class="dashboard" id="dashboard">
-    <h2>Dashboard do Administrador</h2>
-    <p>Menu de gerenciamento completo:</p>
-    <ul>
-      <li>🔍 Visualizar usuários conectados</li>
-      <li>🗑️ Remover ou bloquear usuários</li>
-      <li>✅ Atualizar status de renovação</li>
-      <li>📅 Editar datas e validade do acesso</li>
-      <li>📤 Enviar notificações pelo Telegram</li>
-      <li>📈 Ver gráficos de uso e histórico</li>
-    </ul>
-  </div>  <script>
-    const senhaCorreta = 'wifire2025';
+  <header>WiFire - Acesso Administrativo</header>
+  <div class="container">
+    <button class="admin-btn" onclick="openPopup()">Acesso Administrativo</button><div id="popup" class="popup">
+  <span class="close-btn" onclick="closePopup()">✖</span>
+  <h2>Área Administrativa</h2>
+  <input type="password" id="adminPassword" placeholder="Digite a senha" />
+  <button onclick="checkPassword()">Acessar</button>
+</div>
 
-    function mostrarPopup() {
-      document.getElementById('popup').style.display = 'flex';
+<div id="dashboard" class="dashboard"></div>
+
+  </div>  <script>
+    const ADMIN_PASSWORD = 'wifire2025';
+
+    function openPopup() {
+      document.getElementById('popup').style.display = 'block';
     }
 
-    function fecharPopup() {
+    function closePopup() {
       document.getElementById('popup').style.display = 'none';
     }
 
-    function verificarSenha() {
-      const senha = document.getElementById('senha').value;
-      if (senha === senhaCorreta) {
+    function checkPassword() {
+      const input = document.getElementById('adminPassword').value;
+      if (input === ADMIN_PASSWORD) {
         document.getElementById('popup').style.display = 'none';
-        document.querySelector('.admin-box').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
+        loadDashboard();
       } else {
         alert('Senha incorreta.');
       }
+    }
+
+    function loadDashboard() {
+      const dashboard = document.getElementById('dashboard');
+      dashboard.style.display = 'block';
+
+      // Simulação de dados vindos do bot (substituir pelo fetch real)
+      const usuarios = [
+        { nome: 'João Silva', celular: '+55 11 91234-5678', data: '2025-07-22', status: 'Ativo' },
+        { nome: 'Maria Oliveira', celular: '+55 21 99876-5432', data: '2025-07-18', status: 'Inativo' },
+      ];
+
+      let html = '<h3>Usuários Cadastrados</h3>';
+      usuarios.forEach((u, i) => {
+        html += `
+          <div class="user-card">
+            <strong>${u.nome}</strong><br>
+            Celular: ${u.celular}<br>
+            Data de Entrada: ${u.data}<br>
+            Status: ${u.status}<br>
+            <button onclick="renovar(${i})">Renovar</button>
+            <button onclick="remover(${i})">Excluir</button>
+          </div>
+        `;
+      });
+      dashboard.innerHTML = html;
+    }
+
+    function renovar(index) {
+      alert('Renovação enviada para o bot (exemplo).');
+    }
+
+    function remover(index) {
+      alert('Remoção enviada para o bot (exemplo).');
     }
   </script></body>
 </html>
