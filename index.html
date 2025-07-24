@@ -3,145 +3,222 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WiFire Conecta</title>
-  <link href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
       font-family: 'Antipasto', sans-serif;
-      background-color: #111;
+      background-color: #0d0d0d;
       color: #fff;
     }
     header {
-      background-color: #1c1c1c;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background-color: #1a1a1a;
       padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .logo {
       font-size: 1.5rem;
-      color: #a64ca6;
-      font-weight: bold;
+      color: #a259ff;
     }
     .menu-btn {
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
       cursor: pointer;
     }
     nav {
       display: none;
-      flex-direction: column;
-      background-color: #222;
+      background-color: #111;
       position: absolute;
       top: 60px;
-      left: 0;
-      width: 100%;
-      padding: 1rem;
+      right: 0;
+      width: 200px;
     }
     nav a {
-      color: #a64ca6;
+      display: block;
+      padding: 1rem;
+      color: white;
       text-decoration: none;
-      margin-bottom: 1rem;
+      border-bottom: 1px solid #333;
     }
-    .show-menu nav {
-      display: flex;
-    }
-    .form-container {
-      max-width: 400px;
-      margin: 2rem auto;
-      background-color: #222;
-      padding: 2rem;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(166, 76, 166, 0.5);
-    }
-    input, button {
-      width: 100%;
-      padding: 0.7rem;
-      margin: 0.5rem 0;
-      border: none;
-      border-radius: 5px;
-    }
-    input {
+    nav a:hover {
       background-color: #333;
-      color: #fff;
     }
-    button {
-      background-color: #a64ca6;
-      color: #fff;
-      font-weight: bold;
-      cursor: pointer;
+    .popup, .admin-panel {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #1e1e1e;
+      border: 1px solid #a259ff;
+      padding: 2rem;
+      z-index: 10;
+    }
+    .popup h2, .admin-panel h2 {
+      margin-top: 0;
+      color: #a259ff;
+    }
+    .overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 5;
     }
     .dashboard {
-      display: none;
-      padding: 1rem;
+      padding: 2rem;
     }
-    .visible {
-      display: block;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    table, th, td {
+      border: 1px solid #444;
+    }
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+    }
+    th {
+      background-color: #222;
+    }
+    .btn {
+      background-color: #a259ff;
+      border: none;
+      padding: 0.5rem 1rem;
+      color: white;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <header>
     <div class="logo">WiFire Conecta</div>
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <div class="menu-btn" onclick="toggleMenu()">☰</div>
   </header>
-  <nav>
-    <a href="#" onclick="showForm('cadastro')">Cadastro de Usuários</a>
-    <a href="#" onclick="showForm('login')">Login</a>
-  </nav>  <div id="cadastro" class="form-container" style="display: none">
-    <h2>Cadastro de Usuário</h2>
-    <input type="text" id="nome" placeholder="Nome" required />
-    <input type="text" id="numero" placeholder="Número de celular" required />
-    <button onclick="enviarCadastro()">Cadastrar</button>
-  </div>  <div id="login" class="form-container" style="display: none">
-    <h2>Login</h2>
-    <input type="text" id="loginNome" placeholder="Nome" required />
-    <input type="text" id="loginNumero" placeholder="Número de celular" required />
-    <button onclick="acessarDashboard()">Entrar</button>
-  </div>  <div id="dashboard" class="dashboard">
-    <h2>Bem-vindo ao Painel do Cliente</h2>
-    <p>Aqui você verá os serviços, produtos e conteúdos exclusivos.</p>
+  <nav id="nav">
+    <a href="#" onclick="showUserForm()">Cadastro de Usuário</a>
+    <a href="#" onclick="checkAdmin()">Acesso Administrativo</a>
+  </nav>  <div class="overlay" id="overlay"></div>  <div class="popup" id="adminPopup">
+    <h2>Área Administrativa</h2>
+    <input type="password" id="adminPass" placeholder="Senha de Acesso" />
+    <button class="btn" onclick="verifyPassword()">Acessar</button>
+    <button class="btn" onclick="closePopup()">Fechar</button>
+  </div>  <div class="admin-panel" id="adminPanel">
+    <h2>Dashboard do Administrador</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Número</th>
+          <th>Data</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="userTable">
+        <!-- Usuários adicionados aqui -->
+      </tbody>
+    </table>
+    <button class="btn" onclick="closeAdminPanel()">Fechar</button>
+  </div>  <div class="popup" id="userForm">
+    <h2>Cadastrar Usuário</h2>
+    <input type="text" id="nome" placeholder="Nome do Usuário" /><br/><br/>
+    <input type="text" id="numero" placeholder="Número do Usuário" /><br/><br/>
+    <button class="btn" onclick="addUser()">Cadastrar</button>
+    <button class="btn" onclick="closeUserForm()">Fechar</button>
   </div>  <script>
+    let users = [];
+
     function toggleMenu() {
-      document.body.classList.toggle('show-menu');
+      const nav = document.getElementById('nav');
+      nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
     }
 
-    function showForm(formId) {
-      document.getElementById('cadastro').style.display = 'none';
-      document.getElementById('login').style.display = 'none';
-      document.getElementById(formId).style.display = 'block';
-      document.getElementById('dashboard').classList.remove('visible');
+    function showUserForm() {
+      document.getElementById('userForm').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
     }
 
-    function enviarCadastro() {
+    function closeUserForm() {
+      document.getElementById('userForm').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+
+    function addUser() {
       const nome = document.getElementById('nome').value;
       const numero = document.getElementById('numero').value;
-
-      // Envio para o BOT via webhook (ajustar URL real do servidor)
-      fetch('https://seu-bot-servidor.com/cadastrar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, numero })
-      })
-        .then(res => res.json())
-        .then(data => {
-          alert('Usuário cadastrado com sucesso!');
-          document.getElementById('cadastro').style.display = 'none';
-        })
-        .catch(err => alert('Erro ao cadastrar'));
+      const data = new Date().toLocaleDateString();
+      const status = 'ativo';
+      users.push({ nome, numero, data, status });
+      alert('Usuário cadastrado com sucesso!');
+      closeUserForm();
     }
 
-    function acessarDashboard() {
-      // Aqui apenas simula login
-      const nome = document.getElementById('loginNome').value;
-      const numero = document.getElementById('loginNumero').value;
+    function checkAdmin() {
+      document.getElementById('adminPopup').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+    }
 
-      if (nome && numero) {
-        document.getElementById('login').style.display = 'none';
-        document.getElementById('dashboard').classList.add('visible');
+    function closePopup() {
+      document.getElementById('adminPopup').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+
+    function verifyPassword() {
+      const pass = document.getElementById('adminPass').value;
+      if (pass === 'wifire2025') {
+        showAdminPanel();
+        closePopup();
+      } else {
+        alert('Senha incorreta. Acesso negado.');
       }
+    }
+
+    function showAdminPanel() {
+      document.getElementById('adminPanel').style.display = 'block';
+      document.getElementById('overlay').style.display = 'block';
+      renderUsers();
+    }
+
+    function closeAdminPanel() {
+      document.getElementById('adminPanel').style.display = 'none';
+      document.getElementById('overlay').style.display = 'none';
+    }
+
+    function renderUsers() {
+      const tbody = document.getElementById('userTable');
+      tbody.innerHTML = '';
+      users.forEach((u, i) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${u.nome}</td>
+            <td>${u.numero}</td>
+            <td>${u.data}</td>
+            <td>${u.status}</td>
+            <td>
+              <button class='btn' onclick='renew(${i})'>Renovar</button>
+              <button class='btn' onclick='removeUser(${i})'>Excluir</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    function removeUser(index) {
+      users.splice(index, 1);
+      renderUsers();
+    }
+
+    function renew(index) {
+      users[index].data = new Date().toLocaleDateString();
+      users[index].status = 'renovado';
+      renderUsers();
     }
   </script></body>
 </html>
