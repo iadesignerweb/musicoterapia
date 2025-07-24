@@ -1,224 +1,49 @@
-<!DOCTYPE html><html lang="pt-BR">
-<head>
+<!DOCTYPE html><html lang="pt-br"><head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WiFire Conecta</title>
+  <title>WiFire Admin</title>
+  <link rel="stylesheet" href="./style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Antipasto', sans-serif;
-      background-color: #0d0d0d;
-      color: #fff;
-    }
-    header {
-      background-color: #1a1a1a;
-      padding: 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo {
-      font-size: 1.5rem;
-      color: #a259ff;
-    }
-    .menu-btn {
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-    nav {
-      display: none;
-      background-color: #111;
-      position: absolute;
-      top: 60px;
-      right: 0;
-      width: 200px;
-    }
-    nav a {
-      display: block;
-      padding: 1rem;
-      color: white;
-      text-decoration: none;
-      border-bottom: 1px solid #333;
-    }
-    nav a:hover {
-      background-color: #333;
-    }
-    .popup, .admin-panel {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #1e1e1e;
-      border: 1px solid #a259ff;
-      padding: 2rem;
-      z-index: 10;
-    }
-    .popup h2, .admin-panel h2 {
-      margin-top: 0;
-      color: #a259ff;
-    }
-    .overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      z-index: 5;
-    }
-    .dashboard {
-      padding: 2rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1rem;
-    }
-    table, th, td {
-      border: 1px solid #444;
-    }
-    th, td {
-      padding: 0.75rem;
-      text-align: left;
-    }
-    th {
-      background-color: #222;
-    }
-    .btn {
-      background-color: #a259ff;
-      border: none;
-      padding: 0.5rem 1rem;
-      color: white;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
+  <script defer src="./script.js"></script>
+</head><body class="dark-theme">
   <header>
-    <div class="logo">WiFire Conecta</div>
-    <div class="menu-btn" onclick="toggleMenu()">☰</div>
-  </header>
-  <nav id="nav">
-    <a href="#" onclick="showUserForm()">Cadastro de Usuário</a>
-    <a href="#" onclick="checkAdmin()">Acesso Administrativo</a>
-  </nav>  <div class="overlay" id="overlay"></div>  <div class="popup" id="adminPopup">
-    <h2>Área Administrativa</h2>
-    <input type="password" id="adminPass" placeholder="Senha de Acesso" />
-    <button class="btn" onclick="verifyPassword()">Acessar</button>
-    <button class="btn" onclick="closePopup()">Fechar</button>
-  </div>  <div class="admin-panel" id="adminPanel">
-    <h2>Dashboard do Administrador</h2>
-    <table>
+    <img src="logo.png" alt="WiFire Logo" class="logo" />
+    <h1>WiFire Admin</h1>
+  </header>  <main>
+    <section id="login-section">
+      <h2>Acesso Administrativo</h2>
+      <input type="password" id="admin-password" placeholder="Digite a senha...">
+      <button onclick="verificarSenha()">Entrar</button>
+      <p id="login-message"></p>
+    </section><section id="admin-dashboard" style="display:none">
+  <h2>Painel de Controle</h2>
+  <div class="painel">
+    <h3>Usuários Cadastrados</h3>
+    <table id="user-table">
       <thead>
         <tr>
           <th>Nome</th>
           <th>Número</th>
-          <th>Data</th>
+          <th>Assinatura</th>
           <th>Status</th>
           <th>Ações</th>
         </tr>
       </thead>
-      <tbody id="userTable">
-        <!-- Usuários adicionados aqui -->
+      <tbody id="user-data">
+        <!-- Dados reais vindos do bot serão inseridos aqui -->
       </tbody>
     </table>
-    <button class="btn" onclick="closeAdminPanel()">Fechar</button>
-  </div>  <div class="popup" id="userForm">
-    <h2>Cadastrar Usuário</h2>
-    <input type="text" id="nome" placeholder="Nome do Usuário" /><br/><br/>
-    <input type="text" id="numero" placeholder="Número do Usuário" /><br/><br/>
-    <button class="btn" onclick="addUser()">Cadastrar</button>
-    <button class="btn" onclick="closeUserForm()">Fechar</button>
-  </div>  <script>
-    let users = [];
+  </div>
+</section>
 
-    function toggleMenu() {
-      const nav = document.getElementById('nav');
-      nav.style.display = nav.style.display === 'block' ? 'none' : 'block';
-    }
+<div id="popup" class="popup hidden">
+  <div class="popup-content">
+    <p>Acesso restrito! Senha incorreta ou não autorizado.</p>
+    <button onclick="fecharPopup()">Fechar</button>
+  </div>
+</div>
 
-    function showUserForm() {
-      document.getElementById('userForm').style.display = 'block';
-      document.getElementById('overlay').style.display = 'block';
-    }
-
-    function closeUserForm() {
-      document.getElementById('userForm').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
-    }
-
-    function addUser() {
-      const nome = document.getElementById('nome').value;
-      const numero = document.getElementById('numero').value;
-      const data = new Date().toLocaleDateString();
-      const status = 'ativo';
-      users.push({ nome, numero, data, status });
-      alert('Usuário cadastrado com sucesso!');
-      closeUserForm();
-    }
-
-    function checkAdmin() {
-      document.getElementById('adminPopup').style.display = 'block';
-      document.getElementById('overlay').style.display = 'block';
-    }
-
-    function closePopup() {
-      document.getElementById('adminPopup').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
-    }
-
-    function verifyPassword() {
-      const pass = document.getElementById('adminPass').value;
-      if (pass === 'wifire2025') {
-        showAdminPanel();
-        closePopup();
-      } else {
-        alert('Senha incorreta. Acesso negado.');
-      }
-    }
-
-    function showAdminPanel() {
-      document.getElementById('adminPanel').style.display = 'block';
-      document.getElementById('overlay').style.display = 'block';
-      renderUsers();
-    }
-
-    function closeAdminPanel() {
-      document.getElementById('adminPanel').style.display = 'none';
-      document.getElementById('overlay').style.display = 'none';
-    }
-
-    function renderUsers() {
-      const tbody = document.getElementById('userTable');
-      tbody.innerHTML = '';
-      users.forEach((u, i) => {
-        tbody.innerHTML += `
-          <tr>
-            <td>${u.nome}</td>
-            <td>${u.numero}</td>
-            <td>${u.data}</td>
-            <td>${u.status}</td>
-            <td>
-              <button class='btn' onclick='renew(${i})'>Renovar</button>
-              <button class='btn' onclick='removeUser(${i})'>Excluir</button>
-            </td>
-          </tr>
-        `;
-      });
-    }
-
-    function removeUser(index) {
-      users.splice(index, 1);
-      renderUsers();
-    }
-
-    function renew(index) {
-      users[index].data = new Date().toLocaleDateString();
-      users[index].status = 'renovado';
-      renderUsers();
-    }
-  </script></body>
-</html>
+  </main>
+</body></html>
