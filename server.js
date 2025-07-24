@@ -1,50 +1,42 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const https = require('https');
-const path = require('path');
+const express = require("express");
+const bodyParser = require("body-parser");
+const fetch = require("node-fetch");
+require("dotenv").config();
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// === CONFIGURAÇÕES DO TELEGRAM ===
-const TELEGRAM_BOT_TOKEN = '7581940581:AAH35oxpMuNWt9BXhJVYn_ZpiRlTADEnSfM'; // Token do seu bot
-const TELEGRAM_CHAT_ID = 'SEU_CHAT_ID_AQUI'; // Coloque aqui o seu chat_id (ID pessoal ou de grupo)
+const BOT_TOKEN = process.env.BOT_TOKEN;
+const CHAT_ID = process.env.CHAT_ID;
 
-// === CONFIG DO SERVIDOR ===
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public'))); // Pasta pública para HTML, CSS e JS
+app.use(express.static("public"));
 
-// === ENDPOINT DE CADASTRO ===
-app.post('/cadastro', (req, res) => {
+app.post("/enviar", async (req, res) => {
   const { nome, numero } = req.body;
 
-  if (!nome || !numero) {
-    return res.status(400).json({ error: 'Dados incompletos.' });
+  if (!nome || !numero) return res.send("Preencha todos os campos.");
+
+  const mensagem = `📲 Novo cadastro no WiFire:\n\n👤 Nome: ${nome}\n📞 Número: ${numero}`;
+
+  try {
+    const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: mensagem
+      })
+    });
+
+    res.send("Dados enviados com sucesso!");
+  } catch (erro) {
+    console.error("Erro ao enviar:", erro);
+    res.send("Erro ao enviar mensagem.");
   }
-
-  const mensagem = `🚀 Novo Cadastro WiFire:\n👤 Nome: ${nome}\n📱 Número: ${numero}`;
-  const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage?chat_id=${TELEGRAM_CHAT_ID}&text=${encodeURIComponent(mensagem)}`;
-
-  https.get(url, (telegramRes) => {
-    if (telegramRes.statusCode === 200) {
-      res.json({ message: 'Cadastro enviado com sucesso!' });
-    } else {
-      console.error(`Erro Telegram: Código ${telegramRes.statusCode}`);
-      res.status(500).json({ error: 'Erro ao enviar para o Telegram.' });
-    }
-  }).on('error', (err) => {
-    console.error('Erro de conexão com Telegram:', err);
-    res.status(500).json({ error: 'Erro de conexão com o Telegram.' });
-  });
-
-  // Opcional: salvar localmente como backup
-  const dados = { nome, numero, data: new Date().toISOString() };
-  fs.appendFile('cadastros.json', JSON.stringify(dados) + ',\n', (err) => {
-    if (err) console.error('Erro ao salvar local:', err);
-  });
 });
 
-// === INICIAR SERVIDOR ===
 app.listen(PORT, () => {
-  console.log(`✅ Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
