@@ -1,18 +1,63 @@
+// Envio do formulário de cadastro
 document.addEventListener('DOMContentLoaded', () => {
-  console.log("WiFire Conecta iniciado!");
+  const form = document.getElementById('cadastroForm');
+  const popup = document.getElementById('popup');
 
-  // Exemplo de animação leve
-  const cards = document.querySelectorAll('.card');
-  cards.forEach((card, i) => {
-    card.style.opacity = 0;
-    card.style.transform = 'translateY(20px)';
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const nome = document.getElementById('nome').value.trim();
+      const numero = document.getElementById('numero').value.trim();
+
+      if (!nome || !numero) {
+        showPopup("Por favor, preencha todos os campos.");
+        return;
+      }
+
+      try {
+        const response = await fetch('/cadastro', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nome, numero })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showPopup(data.message || "Cadastro realizado com sucesso!");
+          form.reset();
+        } else {
+          showPopup(data.error || "Erro ao enviar dados.");
+        }
+      } catch (error) {
+        showPopup("Erro de conexão com o servidor.");
+        console.error(error);
+      }
+    });
+  }
+
+  // Login Admin
+  const adminForm = document.getElementById('adminForm');
+  if (adminForm) {
+    adminForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const senha = document.getElementById('senha').value;
+      if (senha === 'wifire2025') {
+        window.location.href = "/painel.html";
+      } else {
+        showPopup("Acesso restrito. Senha incorreta.");
+      }
+    });
+  }
+
+  function showPopup(message) {
+    popup.innerText = message;
+    popup.style.display = 'block';
     setTimeout(() => {
-      card.style.transition = 'all 0.6s ease';
-      card.style.opacity = 1;
-      card.style.transform = 'translateY(0)';
-    }, 200 * i);
-  });
-
-  // 🚀 Preparação para futura integração com bot ou dashboard
-  // Aqui você pode incluir chamadas para o Telegram bot ou API do dashboard
+      popup.style.display = 'none';
+    }, 3500);
+  }
 });
