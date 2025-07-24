@@ -1,41 +1,33 @@
-<!DOCTYPE html><html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>WiFire Conecta</title>
-  <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <header>
-    <img src="logo.png" alt="WiFire Logo" class="logo" />
-    <button class="menu-btn" onclick="toggleMenu()">☰</button>
-    <nav id="menu" class="menu">
-      <a href="#cadastro">Cadastro de Usuários</a>
-      <a href="#dashboard">Dashboard</a>
-      <a href="#admin">Acesso Administrativo</a>
-    </nav>
-  </header>  <main>
-    <section id="cadastro">
-      <h1>Cadastro de Usuário</h1>
-      <form id="cadastroForm">
-        <input type="text" id="nome" name="nome" placeholder="Nome completo" required />
-        <input type="tel" id="numero" name="numero" placeholder="Número de celular" required />
-        <button type="submit">Cadastrar</button>
-      </form>
-    </section><section id="dashboard" class="hidden">
-  <h1>Dashboard do Cliente</h1>
-  <p>Aqui serão exibidos os produtos, serviços e conteúdos informativos.</p>
-</section>
+<body style="font-family:sans-serif; text-align:center;">
+  <h2>WiFire Conecta</h2>
+  <form id="formulario">
+    <input type="text" id="nome" placeholder="Seu nome" required /><br/><br/>
+    <input type="text" id="numero" placeholder="Seu número" required /><br/><br/>
+    <button type="submit">Conectar</button>
+  </form>
 
-<section id="admin" class="hidden">
-  <h1>Acesso Administrativo</h1>
-  <input type="password" id="adminPass" placeholder="Senha de administrador" />
-  <button onclick="validarAdmin()">Entrar</button>
-  <div id="adminPainel" class="hidden">
-    <h2>Gerenciar Usuários</h2>
-    <div id="listaUsuarios"></div>
-  </div>
-</section>
+  <script>
+    document.getElementById("formulario").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      const nome = document.getElementById("nome").value;
+      const numero = document.getElementById("numero").value;
 
-  </main>  <script src="script.js"></script></body>
+      const resposta = await fetch("/enviar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ nome, numero })
+      });
+
+      const resultado = await resposta.text();
+      alert(resultado);
+    });
+  </script>
+</body>
 </html>
