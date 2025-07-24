@@ -1,103 +1,117 @@
-/* Reset */
+@import url('https://fonts.googleapis.com/css2?family=Antipasto&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: 'Antipasto', sans-serif;
 }
 
 body {
-  background-color: #1C1C1C;
-  font-family: 'Antipasto', sans-serif;
+  background-color: #121212;
   color: #ffffff;
-  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #1C1C1C;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #333;
-}
-
-.logo {
-  color: #FFA500;
-  font-size: 1.8rem;
-  font-weight: 700;
-}
-
-.menu a {
-  color: #fff;
-  margin-left: 1.5rem;
-  text-decoration: none;
-  font-weight: 300;
-}
-
-.menu a:hover {
-  color: #9B59B6;
-}
-
-.hero {
+  background-color: #1e1e1e;
+  padding: 20px;
   text-align: center;
-  padding: 4rem 2rem;
-  background: linear-gradient(to right, #1C1C1C, #222);
+  border-bottom: 2px solid #9b59b6;
 }
 
-.hero h1 {
-  font-size: 2.5rem;
-  color: #FFA500;
-  font-weight: 400;
+header h1 {
+  color: #9b59b6;
+  font-size: 2em;
 }
 
-.hero p {
-  color: #ccc;
-  font-weight: 200;
-  margin-top: 1rem;
+.container {
+  padding: 30px;
+  max-width: 500px;
+  margin: auto;
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(155, 89, 182, 0.4);
 }
 
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  padding: 4rem 2rem;
-  background: #1E1E1E;
-}
-
-.card {
-  background: #292929;
-  padding: 2rem;
-  border-radius: 12px;
-  text-align: center;
-  transition: transform 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.card .icon {
-  font-size: 2.5rem;
-  color: #9B59B6;
-  margin-bottom: 1rem;
+label {
   display: block;
+  margin-bottom: 5px;
+  color: #cccccc;
 }
 
-.card h2 {
-  color: #FFA500;
-  margin-bottom: 0.5rem;
-  font-size: 1.3rem;
+input[type="text"],
+input[type="tel"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #9b59b6;
+  border-radius: 6px;
+  background-color: #2c2c2c;
+  color: #ffffff;
 }
 
-.card p {
-  color: #ccc;
-  font-size: 0.95rem;
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #9b59b6;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #8e44ad;
+}
+
+.popup {
+  display: none;
+  padding: 20px;
+  background-color: #2c2c2c;
+  border: 1px solid #9b59b6;
+  border-radius: 10px;
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(155, 89, 182, 0.6);
 }
 
 footer {
-  background: #121212;
-  color: #aaa;
+  margin-top: auto;
   text-align: center;
-  padding: 1rem;
-  font-size: 0.9rem;
+  padding: 20px;
+  background-color: #1e1e1e;
+  font-size: 0.9em;
+  color: #888;
+}
+
+.nav {
+  display: flex;
+  justify-content: space-between;
+  background-color: #1e1e1e;
+  padding: 10px 20px;
+  border-bottom: 2px solid #9b59b6;
+}
+
+.nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.nav a:hover {
+  color: #9b59b6;
+}
+
+.logo {
+  height: 40px;
 }
