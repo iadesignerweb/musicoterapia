@@ -1,49 +1,41 @@
-<!DOCTYPE html><html lang="pt-br"><head>
+<!DOCTYPE html><html lang="pt-br">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WiFire Admin</title>
-  <link rel="stylesheet" href="./style.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Antipasto&display=swap" rel="stylesheet">
-  <script defer src="./script.js"></script>
-</head><body class="dark-theme">
+  <title>WiFire Conecta</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
   <header>
     <img src="logo.png" alt="WiFire Logo" class="logo" />
-    <h1>WiFire Admin</h1>
+    <button class="menu-btn" onclick="toggleMenu()">☰</button>
+    <nav id="menu" class="menu">
+      <a href="#cadastro">Cadastro de Usuários</a>
+      <a href="#dashboard">Dashboard</a>
+      <a href="#admin">Acesso Administrativo</a>
+    </nav>
   </header>  <main>
-    <section id="login-section">
-      <h2>Acesso Administrativo</h2>
-      <input type="password" id="admin-password" placeholder="Digite a senha...">
-      <button onclick="verificarSenha()">Entrar</button>
-      <p id="login-message"></p>
-    </section><section id="admin-dashboard" style="display:none">
-  <h2>Painel de Controle</h2>
-  <div class="painel">
-    <h3>Usuários Cadastrados</h3>
-    <table id="user-table">
-      <thead>
-        <tr>
-          <th>Nome</th>
-          <th>Número</th>
-          <th>Assinatura</th>
-          <th>Status</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody id="user-data">
-        <!-- Dados reais vindos do bot serão inseridos aqui -->
-      </tbody>
-    </table>
+    <section id="cadastro">
+      <h1>Cadastro de Usuário</h1>
+      <form id="cadastroForm">
+        <input type="text" id="nome" name="nome" placeholder="Nome completo" required />
+        <input type="tel" id="numero" name="numero" placeholder="Número de celular" required />
+        <button type="submit">Cadastrar</button>
+      </form>
+    </section><section id="dashboard" class="hidden">
+  <h1>Dashboard do Cliente</h1>
+  <p>Aqui serão exibidos os produtos, serviços e conteúdos informativos.</p>
+</section>
+
+<section id="admin" class="hidden">
+  <h1>Acesso Administrativo</h1>
+  <input type="password" id="adminPass" placeholder="Senha de administrador" />
+  <button onclick="validarAdmin()">Entrar</button>
+  <div id="adminPainel" class="hidden">
+    <h2>Gerenciar Usuários</h2>
+    <div id="listaUsuarios"></div>
   </div>
 </section>
 
-<div id="popup" class="popup hidden">
-  <div class="popup-content">
-    <p>Acesso restrito! Senha incorreta ou não autorizado.</p>
-    <button onclick="fecharPopup()">Fechar</button>
-  </div>
-</div>
-
-  </main>
-</body></html>
+  </main>  <script src="script.js"></script></body>
+</html>
