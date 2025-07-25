@@ -6,87 +6,119 @@
   <title>WiFire Conecta</title>
   <style>
     body {
-      background-color: #0a0a0a;
-      color: #ffffff;
+      margin: 0;
       font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      margin: 0;
+      min-height: 100vh;
+      padding: 20px;
     }
+
     .container {
       background: #1e1e1e;
       padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px #ff9900aa;
-      width: 90%;
-      max-width: 400px;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(128, 0, 255, 0.3);
+      text-align: center;
+      width: 100%;
+      max-width: 360px;
     }
-    input, button {
+
+    .logo {
+      max-width: 180px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #b380ff;
+      margin-bottom: 20px;
+    }
+
+    input {
       width: 100%;
       padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
+      margin-bottom: 15px;
       border: none;
-      font-size: 1rem;
-    }
-    input {
-      background: #333;
+      border-radius: 8px;
+      background: #292929;
       color: #fff;
+      font-size: 16px;
     }
+
     button {
-      background-color: #ff9900;
-      color: #000;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #b380ff;
+      color: #121212;
       font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      font-size: 16px;
+      transition: 0.3s;
     }
+
     button:hover {
-      background-color: #ffaa22;
+      background: #a36eff;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
     }
   </style>
 </head>
 <body>
+
   <div class="container">
-    <h2>WiFire Conecta</h2>
-    <input type="text" id="nome" placeholder="Seu nome" required />
-    <input type="text" id="numero" placeholder="Seu número (somente números)" required />
-    <button onclick="enviarDados()">Conectar</button>
-    <p id="resposta"></p>
+    <img src="https://cdn.pixabay.com/photo/2023/12/10/23/24/wifi-8442659_1280.png" alt="WiFire Logo" class="logo" />
+    <h1>WiFire Conecta</h1>
+
+    <form id="wifire-form">
+      <input type="text" id="nome" name="nome" placeholder="Seu nome" required />
+      <input type="tel" id="numero" name="numero" placeholder="Seu número de celular" required />
+      <button type="submit">Conectar-se</button>
+    </form>
+
+    <div class="footer">Powered by Plínio Studio • ©2025</div>
   </div>
 
   <script>
-    function enviarDados() {
-      const nome = document.getElementById("nome").value.trim();
-      const numero = document.getElementById("numero").value.trim();
-      const resposta = document.getElementById("resposta");
+    const form = document.getElementById('wifire-form');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const nome = document.getElementById('nome').value.trim();
+      const numero = document.getElementById('numero').value.trim();
 
       if (!nome || !numero) {
-        resposta.innerText = "Preencha todos os campos!";
+        alert("Preencha todos os campos!");
         return;
       }
 
-      fetch("http://192.168.0.106:3000", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ nome, numero }),
-      })
-      .then((res) => {
-        if (!res.ok) throw new Error("Erro ao conectar");
-        return res.json();
-      })
-      .then((data) => {
-        resposta.innerText = "✅ Dados enviados com sucesso!";
-      })
-      .catch((error) => {
-        resposta.innerText = "❌ Falha ao enviar. Verifique a conexão.";
+      try {
+        const response = await fetch('/enviar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nome, numero })
+        });
+
+        const data = await response.json();
+        alert(data.message || "Dados enviados com sucesso!");
+        form.reset();
+      } catch (error) {
+        alert("Erro ao conectar. Tente novamente.");
         console.error(error);
-      });
-    }
+      }
+    });
   </script>
+
 </body>
 </html>
