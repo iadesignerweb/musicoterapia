@@ -1,124 +1,62 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WiFire Conecta</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #121212;
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .container {
-      background: #1e1e1e;
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(128, 0, 255, 0.3);
-      text-align: center;
-      width: 100%;
-      max-width: 360px;
-    }
-
-    .logo {
-      max-width: 180px;
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: 24px;
-      color: #b380ff;
-      margin-bottom: 20px;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border: none;
-      border-radius: 8px;
-      background: #292929;
-      color: #fff;
-      font-size: 16px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      background: #b380ff;
-      color: #121212;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 16px;
-      transition: 0.3s;
-    }
-
-    button:hover {
-      background: #a36eff;
-    }
-
-    .footer {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #888;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="logo.png" type="image/png">
 </head>
 <body>
-
-  <div class="container">
-    <img src="https://cdn.pixabay.com/photo/2023/12/10/23/24/wifi-8442659_1280.png" alt="WiFire Logo" class="logo" />
-    <h1>WiFire Conecta</h1>
-
-    <form id="wifire-form">
-      <input type="text" id="nome" name="nome" placeholder="Seu nome" required />
-      <input type="tel" id="numero" name="numero" placeholder="Seu número de celular" required />
-      <button type="submit">Conectar-se</button>
-    </form>
-
-    <div class="footer">Powered by Plínio Studio • ©2025</div>
-  </div>
-
-  <script>
-    const form = document.getElementById('wifire-form');
-
-    form.addEventListener('submit', async (e) => {
+  <header>
+    <div class="logo">
+      <img src="logo.png" alt="WiFire Conecta">
+      <span>WiFire Conecta</span>
+    </div>
+    <nav>
+      <input type="checkbox" id="menu-toggle">
+      <label for="menu-toggle" class="hamburger">☰</label>
+      <ul class="menu">
+        <li><a href="#">Início</a></li>
+        <li><a href="#">Delivery</a></li>
+        <li><a href="#">Escolas</a></li>
+        <li><a href="#">Lojas</a></li>
+        <li><a href="#login">Login</a></li>
+        <li><a href="#admin">Área Administrativa</a></li>
+      </ul>
+    </nav>
+  </header>  <main>
+    <section class="form-section">
+      <h1>Conecte-se com a sua rede local</h1>
+      <form id="connect-form">
+        <input type="text" name="name" placeholder="Seu nome" required>
+        <input type="tel" name="number" placeholder="Seu número" required>
+        <button type="submit">Conectar</button>
+      </form>
+    </section>
+  </main>  <footer>
+    <p>© 2025 WiFire Conecta. Todos os direitos reservados.</p>
+  </footer>  <script>
+    document.getElementById('connect-form').addEventListener('submit', async function(e) {
       e.preventDefault();
-      
-      const nome = document.getElementById('nome').value.trim();
-      const numero = document.getElementById('numero').value.trim();
+      const formData = new FormData(e.target);
+      const name = formData.get('name');
+      const number = formData.get('number');
 
-      if (!nome || !numero) {
-        alert("Preencha todos os campos!");
-        return;
-      }
+      const response = await fetch('https://api.telegram.org/bot<SEU_TOKEN>/sendMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: '<SEU_CHAT_ID>',
+          text: `Novo acesso WiFire:\nNome: ${name}\nNúmero: ${number}`
+        })
+      });
 
-      try {
-        const response = await fetch('/enviar', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nome, numero })
-        });
-
-        const data = await response.json();
-        alert(data.message || "Dados enviados com sucesso!");
-        form.reset();
-      } catch (error) {
-        alert("Erro ao conectar. Tente novamente.");
-        console.error(error);
+      if (response.ok) {
+        alert('Conectado com sucesso!');
+        e.target.reset();
+      } else {
+        alert('Erro ao conectar. Tente novamente.');
       }
     });
-  </script>
-
-</body>
+  </script></body>
 </html>
