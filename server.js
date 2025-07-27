@@ -5,31 +5,46 @@ const fetch = require('node-fetch');
 const app = express();
 const PORT = 3000;
 
-const TELEGRAM_TOKEN = "7581940581:AAH35oxpMuNWt9BXhJVYn_ZpiRlTADEnSfM";
-const CHAT_ID = "@WiFireConectaBot"; // Substituir pelo chat_id se for grupo
+// Token do seu Bot do Telegram (já incluído)
+const TELEGRAM_TOKEN = '7581940581:AAH35oxpMuNWt9BXhJVYn_ZpiRlTADEnSfM';
+// ID do seu chat (pode ser um canal ou grupo privado)
+const TELEGRAM_CHAT_ID = 'YOUR_CHAT_ID'; // Substitua se quiser enviar para canal específico
 
-app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(express.static('public'));
 
-app.post('/enviar', async (req, res) => {
+// Endpoint para receber dados do formulário
+app.post('/webhook', async (req, res) => {
   const { nome, numero } = req.body;
 
-  const mensagem = `🔥 Novo Cadastro no WiFire Conecta 🔥\n👤 Nome: ${nome}\n📱 Número: ${numero}`;
+  if (!nome || !numero) {
+    return res.status(400).send({ error: 'Nome ou número ausente.' });
+  }
+
+  const mensagem = `📶 Novo acesso WiFire:\n\n👤 Nome: ${nome}\n📱 Número: ${numero}`;
 
   try {
     await fetch(`https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: CHAT_ID, text: mensagem }),
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: mensagem,
+        parse_mode: 'Markdown'
+      })
     });
 
-    res.send('Cadastro enviado com sucesso!');
-  } catch (error) {
-    res.status(500).send('Erro ao enviar mensagem.');
+    res.status(200).send({ success: true });
+  } catch (err) {
+    console.error('Erro ao enviar para o Telegram:', err.message);
+    res.status(500).send({ error: 'Erro ao enviar para o Telegram.' });
   }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 Servidor rodando em http://localhost:${PORT}`);
+// Rota de teste opcional
+app.get('/', (req, res) => {
+  res.send('🔥 Servidor WiFire Conecta está rodando!');
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor ativo em http://localhost:${PORT}`);
 });
