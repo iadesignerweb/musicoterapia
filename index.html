@@ -321,7 +321,7 @@ function seedData() {
     localStorage.setItem(STORAGE_KEYS.convs, JSON.stringify(convs));
   }
   if (!localStorage.getItem(STORAGE_KEYS.settings)) {
-    const settings = { socketEndpoint:'', adminPass:'wifire2025' };
+    const settings = { socketEndpoint: SOCKET_ENDPOINT, adminPass:'wifire2025' };
     localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(settings));
   }
 }
