@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>WiFire Conecta</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
+
+<style>
+:root{
+  --bg:#0f1113; --card:#15181b; --accent:#ff6b6b; --muted:#9aa3ad; --glass: rgba(255,255,255,0.03);
+  --radius:12px; --sidebar-w:260px;
+}
+*{box-sizing:border-box}
+body{font-family:Inter,system-ui,Arial; margin:0; background:linear-gradient(180deg,#070809 0%, #0d0f10 100%); color:#e6eef3; -webkit-font-smoothing:antialiased;}
+.wrap{display:flex; min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w); background:linear-gradient(180deg,var(--card), #0c0e10); padding:18px; border-right:1px solid rgba(255,255,255,0.02); transition:transform .28s ease; z-index:50}
+.sidebar.collapsed{transform:translateX(-110%);}
+.brand{display:flex; gap:12px; align-items:center; margin-bottom:18px}
+.logo{width:44px; height:44px; background:var(--accent); border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff}
+h1.logo-text{font-size:1.05rem; margin:0}
+.nav{margin-top:6px; display:flex; flex-direction:column; gap:6px}
+.nav button{background:transparent; border:none; color:var(--muted); text-align:left; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:600}
+.nav button.active, .nav button:hover{color:#fff; background:linear-gradient(90deg, rgba(255,107,107,0.06), transparent)}
+.sidebar .admin-info{margin-top:18px; font-size:0.9rem; color:var(--muted)}
+
+/* MAIN */
+.main{flex:1; padding:18px;}
+.topbar{display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px}
+.search{background:var(--glass); padding:10px 14px; border-radius:10px; color:var(--muted); width:360px; max-width:60vw; border:1px solid rgba(255,255,255,0.02)}
+.top-actions{display:flex; gap:10px; align-items:center}
+.btn{background:var(--accent); color:#fff; border:none; padding:9px 14px; border-radius:10px; cursor:pointer; font-weight:700}
+.card-row{display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; margin-bottom:12px}
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); padding:14px; border-radius:12px; box-shadow: 0 6px 18px rgba(0,0,0,0.45)}
+.card h3{margin:0; font-size:0.95rem; color:var(--muted)}
+.card .value{font-size:1.4rem; margin-top:6px}
+.content-grid{display:grid; grid-template-columns: 1fr 380px; gap:12px; align-items:start}
+
+/* Table */
+table{width:100%; border-collapse:collapse; font-size:0.93rem}
+th, td{padding:8px; text-align:left; color:var(--muted)}
+th{font-weight:700; color:#fff; font-size:0.86rem}
+.badge{padding:6px 8px; border-radius:999px; font-size:0.8rem}
+.badge.active{background:rgba(72,187,120,0.12); color:#48bb78}
+.badge.inactive{background:rgba(255,99,71,0.08); color:#ff6347}
+.action-btn{background:transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); padding:6px 8px; border-radius:8px; cursor:pointer}
+
+/* Chat */
+.chat-box{background:linear-gradient(180deg,#0b0d0e,#0f1112); border-radius:12px; padding:12px; height:640px; display:flex; flex-direction:column}
+.conversations{height:220px; overflow:auto; border-bottom:1px solid rgba(255,255,255,0.02); padding-bottom:8px}
+.conv-item{display:flex; gap:10px; padding:10px; align-items:center; cursor:pointer; border-radius:8px}
+.conv-item:hover{background:rgba(255,255,255,0.01)}
+.avatar{width:44px;height:44px;border-radius:10px;background:#223;display:flex;align-items:center;justify-content:center;color:#fff}
+.conv-meta{flex:1}
+.messages{flex:1; overflow:auto; padding:10px; display:flex; flex-direction:column; gap:8px}
+.msg{max-width:72%; padding:8px 12px; border-radius:12px}
+.msg.user{align-self:flex-end; background:linear-gradient(90deg,#ff6b6b,#ff8e8e); color:#fff}
+.msg.other{align-self:flex-start; background:rgba(255,255,255,0.03); color:var(--muted)}
+.chat-input{display:flex; gap:8px; padding-top:10px}
+.chat-input input{flex:1; padding:10px; border-radius:10px; border:none; background:var(--glass); color:#fff}
+.small{font-size:0.85rem; color:var(--muted)}
+
+/* modal */
+.modal{position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:9999}
+.modal-card{background:#0c0e10; padding:14px; border-radius:12px; width:420px}
+.grid-cols-2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+
+/* MOBILE FIXES */
+@media (max-width:1000px){
+  .content-grid{grid-template-columns:1fr}
+  .chat-box{height:460px}
+  .sidebar{position:fixed; left:0; top:0; bottom:0; z-index:90}
+}
+@media (max-width:700px){
+  .wrap{flex-direction:column}
+  .sidebar{position:fixed; top:0; left:0; height:100vh; transform:translateX(-110%); width:80%; max-width:320px}
+  .sidebar.open{transform:translateX(0)}
+  .main{padding:12px}
+  .topbar{gap:8px}
+  .search{width:100%}
+  .card-row{grid-template-columns: repeat(2, 1fr); gap:10px}
+  .card .value{font-size:1.1rem}
+  .btn{padding:8px 10px}
+  .card{padding:12px}
+}
+/* mobile hamburger */
+.mobile-toggle{display:none}
+@media (max-width:700px){ .mobile-toggle{display:inline-flex; align-items:center; gap:8px; padding:8px; background:transparent; border-radius:8px; border:1px solid rgba(255,255,255,0.03); color:var(--muted)} }
+</style>
+</head>
+<body>
+
+<div id="appContainer">
+  <div class="wrap" id="adminPanel" style="display:none;">
+    
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo">WiF</div>
+        <div>
+          <h1 class="logo-text">WiFire Conecta</h1>
+          <div class="small">Painel Administrativo</div>
+        </div>
+      </div>
+
+      <nav class="nav" id="menuNav">
+        <button class="active" data-view="dashboard">Dashboard</button>
+        <button data-view="users">Usuários</button>
+        <button data-view="subscriptions">Assinaturas</button>
+        <button data-view="chat">Chat de Pedidos <span id="notiBadge" style="float:right;background:#ff4d4d;padding:3px 6px;border-radius:8px;color:#fff;font-size:0.8rem;display:none">0</span></button>
+        <button data-view="settings">Configurações</button>
+      </nav>
+
+      <div class="admin-info">
+        <div style="margin-top:14px">Logado como: <strong id="adminName">Administrador</strong></div>
+        <div class="small" style="margin-top:10px">Último login: <span id="lastLogin">--</span></div>
+        <div style="margin-top:12px">
+          <button class="action-btn" onclick="logout()">Sair</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <button class="mobile-toggle" id="toggleSidebarBtn" onclick="toggleSidebar()">☰ Menu</button>
+          <input id="searchInput" class="search" placeholder="Pesquisar usuário, número ou pedido..." />
+        </div>
+        <div class="top-actions">
+          <div class="small">Ambiente: <strong>Produção</strong></div>
+          <button class="btn" onclick="openNewUser()">Novo Usuário</button>
+        </div>
+      </div>
+
+      <section id="view-dashboard" class="view">
+        <div class="card-row">
+          <div class="card">
+            <h3>Usuários Ativos</h3>
+            <div class="value" id="statActive">0</div>
+            <div class="small">Usuários com sessão ativa nas últimas 24h</div>
+          </div>
+          <div class="card">
+            <h3>Assinaturas Ativas</h3>
+            <div class="value" id="statSubs">0</div>
+            <div class="small">Planos ativos</div>
+          </div>
+          <div class="card">
+            <h3>Mensagens (hoje)</h3>
+            <div class="value" id="statMsgs">0</div>
+            <div class="small">Mensagens trocadas</div>
+          </div>
+          <div class="card">
+            <h3>Novos Cadastros (7d)</h3>
+            <div class="value" id="statNew">0</div>
+            <div class="small">Crescimento semanal</div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="card">
+            <h3>Atividade</h3>
+            <canvas id="chartActivity" height="160"></canvas>
+          </div>
+
+          <aside class="card">
+            <h3>Resumo Rápido</h3>
+            <div style="margin-top:10px">
+              <div class="small">Total usuários: <strong id="totalUsers">0</strong></div>
+              <div class="small" style="margin-top:8px">Planos: <strong id="planSummary">—</strong></div>
+              <div class="small" style="margin-top:8px">Mensagens totais: <strong id="totalMsgs">0</strong></div>
+              <div style="margin-top:12px">
+                <button class="btn" onclick="syncWithBackend()">Sincronizar (Socket/API)</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="view-users" class="view" style="display:none">
+        <div class="card">
+          <h3>Usuários Cadastrados</h3>
+          <div style="overflow:auto; margin-top:10px">
+            <table id="usersTable">
+              <thead><tr><th>Nome</th><th>Nº</th><th>Plano</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-subscriptions" class="view" style="display:none">
+        <div class="card">
+          <h3>Controle de Assinaturas</h3>
+          <div style="margin-top:10px" id="subsList"></div>
+        </div>
+      </section>
+
+      <section id="view-chat" class="view" style="display:none">
+        <div class="card" style="padding:12px; display:flex; gap:12px; flex-direction:column;">
+          <div style="display:flex; gap:12px; flex-direction:row; align-items:flex-start;">
+            <div style="width:280px">
+              <h3>Conversas</h3>
+              <div class="conversations" id="conversationsList"></div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column;">
+              <h3 id="chatTitle">Selecione uma conversa</h3>
+              <div class="chat-box" style="margin-top:8px">
+                <div class="messages" id="messagesArea"></div>
+                <div class="chat-input">
+                  <input id="chatInput" placeholder="Digite a mensagem..." />
+                  <button class="btn" onclick="sendMessage()">Enviar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view" style="display:none">
+        <div class="card">
+          <h3>Configurações</h3>
+          <div style="margin-top:12px" class="grid-cols-2">
+            <div>
+              <label class="small">Senha Admin</label>
+              <input id="adminPasswordInput" placeholder="wifire2025" style="width:100%; padding:8px; border-radius:8px; border:none; background:var(--glass); color:#fff" />
+            </div>
+            <div>
+              <label class="small">Endpoint Socket (bot/server)</label>
+              <input id="socketEndpoint" placeholder="http(s)://seu-bot:PORT" style="width:100%; padding:8px; border-radius:8px; border:none; background:var(--glass); color:#fff" />
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <button class="btn" onclick="saveSettings()">Salvar Configurações</button>
+            <button class="action-btn" onclick="tryConnectSocket()" style="margin-left:8px">Conectar Socket</button>
+          </div>
+          <div class="small" style="margin-top:8px; color:var(--muted)">Dica: use o endereço do seu WiFire-bot (ex: https://ip:3000)</div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <div id="userLanding" style="display:flex;">
+    <div class="landing-container">
+      <h1>WiFire Conecta</h1>
+      <p>Bem-vindo ao nosso Hotspot Social! Conecte-se para ter acesso Wi-Fi grátis e seguro.</p>
+      <div class="login-form">
+        <input type="text" id="userName" placeholder="Seu Nome" />
+        <input type="tel" id="userPhone" placeholder="Seu WhatsApp (apenas números)" />
+        <button class="btn" onclick="userLogin()">Conectar</button>
+      </div>
+      <div class="admin-link">
+        <a href="#" onclick="showAdminLogin()">Acesso Administrativo</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="adminLoginModal" class="modal" style="display:none">
+    <div class="modal-card">
+      <h2 style="color:var(--accent); margin:0 0 12px 0">Login Administrativo</h2>
+      <div style="margin-bottom:8px" class="small">Digite a senha para acessar o painel</div>
+      <input id="adminInput" placeholder="Senha" type="password" style="width:100%; padding:10px; border-radius:8px; border:none; background:var(--glass); color:#fff" />
+      <div id="loginError" style="color:#ff6b6b; margin-top:8px; display:none"></div>
+      <div style="margin-top:12px; display:flex; gap:8px">
+        <button class="btn" onclick="login()">Entrar</button>
+        <button class="action-btn" onclick="hideAdminLogin()">Voltar</button>
+      </div>
+      <div class="small" style="margin-top:10px; color:var(--muted)">Senha padrão: <strong>wifire2025</strong></div>
+    </div>
+  </div>
+
+  <div id="newUserModal" class="modal" style="display:none">
+    <div class="modal-card">
+      <h3>Novo Usuário</h3>
+      <div style="margin-top:10px" class="grid-cols-2">
+        <input id="nuName" placeholder="Nome" />
+        <input id="nuNumber" placeholder="Número" />
+      </div>
+      <div style="margin-top:10px" class="grid-cols-2">
+        <select id="nuPlan">
+          <option value="gratuito">Gratuito</option>
+          <option value="mensal">Mensal</option>
+          <option value="anual">Anual</option>
+        </select>
+        <select id="nuStatus">
+          <option value="active">Ativo</option>
+          <option value="inactive">Inativo</option>
+        </select>
+      </div>
+      <div style="margin-top:12px; text-align:right">
+        <button class="action-btn" onclick="closeNewUser()">Cancelar</button>
+        <button class="btn" onclick="createUser()">Criar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/*
+  WiFire - Painel Único (frontend)
+*/
+
+/* ============================
+   CONFIG - ajusta aqui
+   ============================
+*/
+const STORAGE_KEYS = { users:'wf_users_v1', convs:'wf_convs_v1', settings:'wf_settings_v1', loggedIn:'wf_logged_in_v1' };
+let socket = null;
+let SOCKET_ENDPOINT = 'https://similar-webcams-ages-frame.trycloudflare.com';
+/* ============================ */
+
+/* ---------- seed local ---------- */
+function seedData() {
+  if (!localStorage.getItem(STORAGE_KEYS.users)) {
+    const users = [
+      {id:1, nome:'João Silva', numero:'87999990001', plano:'mensal', status:'active', created:Date.now()-86400000*5},
+      {id:2, nome:'Maria Souza', numero:'87999990002', plano:'anual', status:'active', created:Date.now()-86400000*12},
+      {id:3, nome:'Carlos Lima', numero:'87999990003', plano:'gratuito', status:'inactive', created:Date.now()-86400000*2}
+    ];
+    localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+  }
+  if (!localStorage.getItem(STORAGE_KEYS.convs)) {
+    const convs = [
+      {id:101,userId:1, last:'Quero renovar plano', unread:1, messages:[
+        {from:'user', text:'Olá, quero renovar meu plano', time:Date.now()-60000},
+        {from:'admin', text:'Posso ajudar. Qual o plano?', time:Date.now()-30000}
+      ]},
+      {id:102,userId:2, last:'Pedido de suporte', unread:0, messages:[
+        {from:'user', text:'Não consigo conectar', time:Date.now()-3600000}
+      ]}
+    ];
+    localStorage.setItem(STORAGE_KEYS.convs, JSON.stringify(convs));
+  }
+  const settings = readSettings();
+  if (!settings.adminPass) {
+    settings.adminPass = 'wifire2025';
+    saveSettings(settings);
+  }
+}
+seedData();
+
+/* ---------- helpers ---------- */
+function readUsers(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]'); }
+function saveUsers(u){ localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(u)); }
+function readConvs(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.convs) || '[]'); }
+function saveConvs(c){ localStorage.setItem(STORAGE_KEYS.convs, JSON.stringify(c)); }
+function readSettings(){
+  const s = localStorage.getItem(STORAGE_KEYS.settings);
+  if (s === 'undefined' || s === null || s === '') return {};
+  try { return JSON.parse(s); }
+  catch(e) { return {}; }
+}
+function saveSettings(s){
+  try {
+    localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(s));
+    alert('Configurações salvas.');
+    console.log('Configurações salvas no localStorage.');
+  } catch(e) {
+    console.error('Erro ao salvar no localStorage:', e);
+    alert('Erro ao salvar as configurações. Verifique o console.');
+  }
+}
+
+/* ---------- Auth & init ---------- */
+let currentAdmin = null;
+function login(){
+  const pw = document.getElementById('adminInput').value.trim();
+  const settings = readSettings();
+  if (pw === (settings.adminPass || 'wifire2025')) {
+    currentAdmin = {name:'Administrador'};
+    document.getElementById('adminLoginModal').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'flex';
+    localStorage.setItem(STORAGE_KEYS.loggedIn, 'true');
+    initPanel();
+  } else {
+    const el = document.getElementById('loginError');
+    el.style.display = 'block';
+    el.textContent = 'Senha incorreta.';
+  }
+}
+function demoAccess(){ 
+  document.getElementById('adminLoginModal').style.display='none'; 
+  document.getElementById('adminPanel').style.display = 'flex';
+  localStorage.setItem(STORAGE_KEYS.loggedIn, 'true');
+  initPanel(); 
+}
+function logout(){ 
+  currentAdmin = null; 
+  localStorage.removeItem(STORAGE_KEYS.loggedIn);
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('userLanding').style.display = 'flex';
+}
+function userLogin() {
+  const userName = document.getElementById('userName').value.trim();
+  const userPhone = document.getElementById('userPhone').value.trim();
+  if (!userName || !userPhone) {
+    alert('Por favor, preencha seu nome e telefone.');
+    return;
+  }
+  // Lógica para enviar dados do usuário para o bot
+  alert('Conectado! Aguarde a página de destino do WiFire Marketing.');
+}
+function showAdminLogin(){
+  document.getElementById('userLanding').style.display = 'none';
+  document.getElementById('adminLoginModal').style.display = 'flex';
+}
+function hideAdminLogin(){
+  document.getElementById('userLanding').style.display = 'flex';
+  document.getElementById('adminLoginModal').style.display = 'none';
+}
+
+/* ---------- Sidebar mobile toggle ---------- */
+function toggleSidebar(){
+  const sb = document.getElementById('sidebar');
+  sb.classList.toggle('open');
+}
+
+/* ---------- UI routing ---------- */
+const menuBtns = document.querySelectorAll('#menuNav button');
+menuBtns.forEach(btn=>btn.addEventListener('click', ()=> {
+  menuBtns.forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  showView(btn.dataset.view);
+  // fechar sidebar no mobile ao navegar
+  if(window.innerWidth <= 700) document.getElementById('sidebar').classList.remove('open');
+}));
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+  document.getElementById('view-'+name).style.display='block';
+  if(name==='chat'){ renderConversations(); selectConversation(); }
+}
+
+/* ---------- Dashboard/chart ---------- */
+let activityChart = null;
+function initDashboard(){
+  const labels = [], data=[];
+  for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); labels.push(d.toLocaleDateString()); data.push(Math.floor(Math.random()*8)+readUsers().length); }
+  const ctx = document.getElementById('chartActivity').getContext('2d');
+  if(activityChart) activityChart.destroy();
+  activityChart = new Chart(ctx, {
+    type:'line',
+    data:{labels, datasets:[{label:'Atividade diária', data, fill:true, tension:0.3, backgroundColor:'rgba(255,107,107,0.12)', borderColor:'#ff6b6b'}]},
+    options:{responsive:true, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}}}
+  });
+  updateStats();
+}
+function updateStats(){
+  const users = readUsers();
+  const convs = readConvs();
+  document.getElementById('statActive').textContent = users.filter(u=>u.status==='active').length;
+  document.getElementById('statSubs').textContent = users.filter(u=>u.plano!=='gratuito' && u.status==='active').length;
+  document.getElementById('statMsgs').textContent = convs.reduce((s,c)=>s+c.messages.filter(m=> (Date.now()-m.time) < 86400000).length,0);
+  document.getElementById('statNew').textContent = users.filter(u=> (Date.now()-u.created) < 7*86400000).length;
+  document.getElementById('totalUsers').textContent = users.length;
+  document.getElementById('totalMsgs').textContent = convs.reduce((s,c)=>s+c.messages.length,0);
+  const planSummary = users.reduce((acc,u)=>{ acc[u.plano]=(acc[u.plano]||0)+1; return acc; },{});
+  document.getElementById('planSummary').textContent = Object.entries(planSummary).map(e=>e.join(':')).join(' • ');
+}
+
+/* ---------- Users UI ---------- */
+function renderUsersTable(){
+  const tbody = document.querySelector('#usersTable tbody'); tbody.innerHTML='';
+  const users = readUsers();
+  users.forEach(u=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:#fff">${u.nome}</td>
+      <td>${u.numero}</td>
+      <td class="small">${u.plano}</td>
+      <td>${u.status === 'active' ? '<span class="badge active">Ativo</span>' : '<span class="badge inactive">Inativo</span>'}</td>
+      <td>
+        <button class="action-btn" onclick="toggleStatus(${u.id})">${u.status==='active'?'Suspender':'Ativar'}</button>
+        <button class="action-btn" onclick="openEditUser(${u.id})">Editar</button>
+        <button class="action-btn" onclick="deleteUser(${u.id})">Remover</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ---------- Subscriptions ---------- */
+function renderSubscriptions(){
+  const dest = document.getElementById('subsList'); dest.innerHTML='';
+  const users = readUsers().filter(u=>u.plano!=='gratuito');
+  if(!users.length){ dest.innerHTML='<div class="small">Nenhuma assinatura premium ativa.</div>'; return; }
+  users.forEach(u=>{
+    const el = document.createElement('div'); el.style.display='flex'; el.style.justifyContent='space-between'; el.style.alignItems='center'; el.style.padding='10px 0'; el.style.borderBottom='1px solid rgba(255,255,255,0.02)';
+    el.innerHTML = `<div><strong>${u.nome}</strong><div class="small">${u.plano} • ${u.numero}</div></div>
+      <div style="display:flex; gap:8px">
+        <button class="action-btn" onclick="suspendPlan(${u.id})">Suspender</button>
+        <button class="btn" onclick="renewPlan(${u.id})">Renovar</button>
+      </div>`;
+    dest.appendChild(el);
+  });
+}
+
+/* ---------- User actions ---------- */
+function toggleStatus(id){ const users=readUsers(), u=users.find(x=>x.id===id); if(!u) return; u.status = u.status==='active' ? 'inactive' : 'active'; saveUsers(users); renderUsersTable(); renderSubscriptions(); updateStats(); }
+function deleteUser(id){ if(!confirm('Remover usuário?')) return; let users = readUsers(); users = users.filter(u=>u.id!==id); saveUsers(users); renderUsersTable(); renderSubscriptions(); updateStats(); }
+function openEditUser(id){ const u = readUsers().find(x=>x.id===id); if(!u) return alert('Usuário não encontrado'); document.getElementById('nuName').value = u.nome; document.getElementById('nuNumber').value = u.numero; document.getElementById('nuPlan').value = u.plano; document.getElementById('nuStatus').value = u.status; document.getElementById('newUserModal').style.display='flex'; document.querySelector('#newUserModal .btn').onclick = function(){ saveEditUser(id) }; }
+function saveEditUser(id){ const name=document.getElementById('nuName').value.trim(), number=document.getElementById('nuNumber').value.trim(), plan=document.getElementById('nuPlan').value, status=document.getElementById('nuStatus').value; if(!name||!number) return alert('Preencha nome e número'); const users=readUsers(); const idx=users.findIndex(x=>x.id===id); if(idx>=0){ users[idx].nome=name; users[idx].numero=number; users[idx].plano=plan; users[idx].status=status; saveUsers(users); } closeNewUser(); renderUsersTable(); renderSubscriptions(); updateStats(); }
+function createUser(){ const name=document.getElementById('nuName').value.trim(), number=document.getElementById('nuNumber').value.trim(), plan=document.getElementById('nuPlan').value, status=document.getElementById('nuStatus').value; if(!name||!number) return alert('Preencha nome e número'); const users=readUsers(); const id=Date.now(); users.push({id, nome:name, numero:number, plano:plan, status:status, created:Date.now()}); saveUsers(users); closeNewUser(); renderUsersTable(); renderSubscriptions(); updateStats(); }
+function openNewUser(){ document.getElementById('nuName').value=''; document.getElementById('nuNumber').value=''; document.getElementById('nuPlan').value='mensal'; document.getElementById('nuStatus').value='active'; document.getElementById('newUserModal').style.display='flex'; document.querySelector('#newUserModal .btn').onclick = createUser; }
+function closeNewUser(){ document.getElementById('newUserModal').style.display='none'; }
+function suspendPlan(id){ if(!confirm('Suspender assinatura desse usuário?')) return; const users=readUsers(); const u=users.find(x=>x.id===id); if(!u) return; u.status='inactive'; saveUsers(users); renderUsersTable(); renderSubscriptions(); updateStats(); }
+function renewPlan(id){ alert('Assinatura renovada (simulado).'); const users=readUsers(); const u=users.find(x=>x.id===id); if(u){ u.created=Date.now(); saveUsers(users); updateStats(); } }
+
+/* ---------- Chat (localStorage + Socket.IO) ---------- */
+let selectedConv = null;
+function renderConversations(){ const list=document.getElementById('conversationsList'); list.innerHTML=''; const convs=readConvs(); convs.forEach(c=>{ const user=readUsers().find(u=>u.id===c.userId) || {nome:'Desconhecido', numero:'---'}; const el=document.createElement('div'); el.className='conv-item'; el.innerHTML = `<div class="avatar">${(user.nome||'U').charAt(0)}</div><div class="conv-meta"><strong style="color:#fff">${user.nome}</strong><div class="small">${c.last}</div></div><div class="small">${c.unread>0?'<span style="background:#ff6b6b;padding:4px 6px;border-radius:6px;color:#fff">'+c.unread+'</span>':''}</div>`; el.onclick = ()=>selectConversation(c.id); list.appendChild(el); }); updateNotificationBadge(); }
+function selectConversation(id){ const convs=readConvs(); const conv = id ? convs.find(c=>c.id===id) : convs[0]; selectedConv = conv || null; document.getElementById('messagesArea').innerHTML=''; if(!conv){ document.getElementById('chatTitle').textContent='Selecione uma conversa'; return; } const user=readUsers().find(u=>u.id===conv.userId) || {nome:'Desconhecido'}; document.getElementById('chatTitle').textContent=`${user.nome} • ${user.numero}`; conv.unread=0; saveConvs(convs); renderConversations(); conv.messages.forEach(m=>{ const el=document.createElement('div'); el.className='msg ' + (m.from==='admin' ? 'user' : 'other'); el.innerHTML = `<div>${m.text}</div><div class="small" style="opacity:0.6;margin-top:6px">${new Date(m.time).toLocaleString()}</div>`; document.getElementById('messagesArea').appendChild(el); }); setTimeout(()=>{ const ma=document.getElementById('messagesArea'); ma.scrollTop=ma.scrollHeight; },50); }
+function sendMessage(){ const text=document.getElementById('chatInput').value.trim(); if(!text || !selectedConv) return; if(socket && socket.connected){ socket.emit('admin:message', { convId: selectedConv.id, text }); } else { const convs=readConvs(); const conv = convs.find(c=>c.id===selectedConv.id); conv.messages.push({from:'admin', text, time:Date.now()}); conv.last=text; saveConvs(convs); selectConversation(conv.id); setTimeout(()=>simulateUserReply(conv.userId,'Recebido pelo bot (demo).'),1000); } document.getElementById('chatInput').value=''; updateStats(); }
+function simulateUserReply(userId, text){ const convs=readConvs(); const conv = convs.find(c=>c.userId===userId); if(!conv){ const newc = {id:Date.now(), userId, last:text, unread:1, messages:[{from:'user', text, time:Date.now()}]}; convs.unshift(newc); } else { conv.messages.push({from:'user', text, time:Date.now()}); conv.last=text; conv.unread = (conv.unread||0)+1; } saveConvs(convs); renderConversations(); notify('Nova mensagem', text); }
+
+/* ---------- Notifications ---------- */
+function updateNotificationBadge(){ const convs = readConvs(); const totalUnread = convs.reduce((s,c)=>s+(c.unread||0),0); const badge = document.getElementById('notiBadge'); if(totalUnread>0){ badge.style.display='inline-block'; badge.textContent=totalUnread; } else badge.style.display='none'; }
+function notify(title, body){ if(!("Notification" in window)) return; if(Notification.permission === "granted"){ new Notification(title,{body}); } else if(Notification.permission !== "denied"){ Notification.requestPermission().then(p=>{ if(p==='granted') new Notification(title,{body}); }); } }
+
+/* ---------- Socket.IO integration ---------- */
+function saveSettings(){
+  const s = readSettings();
+  const newPass=document.getElementById('adminPasswordInput').value.trim();
+  const socketUrl=document.getElementById('socketEndpoint').value.trim();
+  if(newPass) s.adminPass=newPass;
+  s.socketEndpoint=socketUrl;
+  try {
+    localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(s));
+    alert('Configurações salvas.');
+    console.log('Configurações salvas no localStorage.');
+  } catch(e) {
+    console.error('Erro ao salvar no localStorage:', e);
+    alert('Erro ao salvar as configurações. Verifique o console.');
+  }
+  if(socketUrl) {
+    SOCKET_ENDPOINT = socketUrl;
+    tryConnectSocket();
+  }
+}
+function tryConnectSocket(){ const s = readSettings(); const endpoint = document.getElementById('socketEndpoint').value.trim() || s.socketEndpoint || ''; if(!endpoint) return alert('Defina o endpoint do socket nas configurações.'); SOCKET_ENDPOINT = endpoint; connectSocket(SOCKET_ENDPOINT); }
+
+function connectSocket(url){
+  if(socket && socket.connected) socket.disconnect();
+  try {
+    socket = io(url, { transports:['websocket'], reconnectionAttempts:5 });
+    socket.on('connect', ()=>{ console.log('Socket conectado'); notify('Backend Conectado','Conexão ao WiFire-bot estabelecida.'); initAfterSocket(); });
+    socket.on('disconnect', ()=>{ console.log('Socket desconectado'); notify('Backend','Conexão perdida.'); });
+    socket.on('users:update', (users)=>{ saveUsers(users); renderUsersTable(); renderSubscriptions(); updateStats(); });
+    socket.on('convs:update', (convs)=>{ saveConvs(convs); renderConversations(); updateStats(); });
+    socket.on('message:new', (payload)=>{ // payload: { convId, from, text, time }
+      const convs = readConvs(); const conv = convs.find(c=>c.id===payload.convId);
+      if(conv){ conv.messages.push({ from: payload.from, text: payload.text, time: payload.time || Date.now() }); conv.last = payload.text; conv.unread = (conv.unread||0) + (payload.from === 'user' ? 1 : 0); saveConvs(convs); renderConversations(); if(selectedConv && selectedConv.id === conv.id) selectConversation(conv.id); notify('Nova Mensagem', payload.text); }
+      else { socket.emit('convs:fetch'); }
+    });
+    socket.on('admin:message:ack', (ack)=>{ /* opcional */ });
+  } catch(e){ console.error('Erro ao conectar Socket:', e); alert('Erro ao conectar ao socket. Verifique endpoint.'); }
+}
+
+function initAfterSocket(){
+  // se quiser, pedir sync inicial
+  if(socket && socket.connected) socket.emit('sync:request');
+}
+
+/* ---------- Sync / API helpers ---------- */
+function syncWithBackend(){
+  const s = readSettings();
+  if(!s.socketEndpoint) return alert('Defina o endpoint do socket nas configurações (Settings).');
+  if(socket && socket.connected){
+    socket.emit('sync:request');
+    alert('Solicitado sync via socket. Aguarde atualização.');
+  } else {
+    alert('Socket não conectado. Conecte e tente novamente.');
+  }
+}
+
+/* ---------- Init ---------- */
+document.addEventListener('DOMContentLoaded', ()=>{
+  const isLoggedIn = localStorage.getItem(STORAGE_KEYS.loggedIn) === 'true';
+  if (isLoggedIn) {
+    document.getElementById('adminPanel').style.display = 'flex';
+    document.getElementById('userLanding').style.display = 'none';
+    const settings = readSettings();
+    if(settings.socketEndpoint) { 
+      SOCKET_ENDPOINT = settings.socketEndpoint; 
+      connectSocket(SOCKET_ENDPOINT); 
+    }
+  } else {
+    document.getElementById('adminPanel').style.display = 'none';
+    document.getElementById('userLanding').style.display = 'flex';
+  }
+  
+  initPanel();
+  document.getElementById('searchInput').addEventListener('input', (e)=>filterUsers(e.target.value));
+  const s = readSettings(); 
+  if(s.socketEndpoint) document.getElementById('socketEndpoint').value = s.socketEndpoint; 
+  if(s.adminPass) document.getElementById('adminPasswordInput').value = s.adminPass;
+  if(s.socketEndpoint) { 
+    SOCKET_ENDPOINT = s.socketEndpoint; 
+    connectSocket(SOCKET_ENDPOINT); 
+  }
+});
+function initPanel(){
+  renderUsersTable(); renderSubscriptions(); renderConversations(); initDashboard();
+}
+function filterUsers(q){ q = q.trim().toLowerCase(); document.querySelectorAll('#usersTable tbody tr').forEach(r=>{ const txt = r.textContent.toLowerCase(); r.style.display = txt.includes(q) ? '' : 'none'; }); }
+
+/* ---------- Utilities ---------- */
+// document.addEventListener('DOMContentLoaded', ()=>{ /* nothing auto */ });
+
+/* ---------- localStorage wrappers ---------- */
+function readUsers(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]'); }
+function saveUsers(u){ localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(u)); }
+function readConvs(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.convs) || '[]'); }
+function saveConvs(c){ localStorage.setItem(STORAGE_KEYS.convs, JSON.stringify(c)); }
+function readSettings(){
+  const s = localStorage.getItem(STORAGE_KEYS.settings);
+  if (s === 'undefined' || s === null || s === '') return {};
+  try { return JSON.parse(s); }
+  catch(e) { return {}; }
+}
+function saveSettings(s){ localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(s)); }
+
+/* END */
+</script>
+</body>
+</html>
