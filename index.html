@@ -9,23 +9,28 @@
 </head>
 <body>
 
-<div id="landing-page" class="flex-center">
-    <div class="card-login">
-        <div class="logo-circle">WiF</div>
-        <h1>WiFire Conecta</h1>
-        <p>Acesso Wi-Fi grátis e seguro.</p>
-        
-        <div class="user-login-form">
-            <input type="text" id="userName" placeholder="Seu Nome" class="input-field" />
-            <input type="tel" id="userPhone" placeholder="Seu WhatsApp" class="input-field" />
-            <button class="btn" onclick="requestUserAccess()">Conectar</button>
-            <div id="userMessage" class="small-text mt-10"></div>
-        </div>
-
-        <div class="admin-link mt-20">
-            <a href="admin.html">Acesso Administrativo</a>
+<div id="landingPage">
+  <div class="landing-container">
+    <div class="brand">
+        <div class="logo">WiF</div>
+        <div>
+            <h1 class="logo-text">WiFire Conecta</h1>
+            <div class="small-text">Acesso Wi-Fi grátis e seguro.</div>
         </div>
     </div>
+    
+    <div class="user-login-form">
+      <h3>Conectar</h3>
+      <input type="text" id="userName" placeholder="Seu Nome" class="input-field" />
+      <input type="tel" id="userPhone" placeholder="Seu WhatsApp" class="input-field" />
+      <button class="btn" onclick="requestUserAccess()">Conectar</button>
+      <div id="userMessage" class="small-text mt-10"></div>
+    </div>
+
+    <div class="admin-link">
+      <a href="admin.html">Acesso Administrativo</a>
+    </div>
+  </div>
 </div>
 
 <script src="script.js"></script>
