@@ -6,66 +6,220 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>WiFire - Painel Administrativo</title>
 <link rel="stylesheet" href="style.css">
-
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
 </head>
 <body>
 
-<div id="admin-page">
-    <div class="admin-login-modal" id="adminLoginModal" style="display:none;">
-        <div class="modal-card">
-            <div class="logo-circle modal-logo">WiF</div>
-            <h2>Acesso Administrativo</h2>
-            <div class="small-text">Digite a senha para acessar o painel.</div>
-            <input id="adminInput" placeholder="Senha" type="password" class="input-field mt-10" />
-            <div id="loginError" class="small-text mt-10 error-text"></div>
-            <div class="flex-row mt-20">
-                <button class="btn" onclick="login()">Entrar</button>
-                <button class="btn-secondary ml-10" onclick="window.location.href='index.html'">Voltar</button>
-            </div>
-            <div class="small-text mt-10 muted-text">Senha padrão: <strong>wifire2025</strong></div>
-        </div>
-    </div>
+<div id="adminContainer">
+  <div class="wrap" id="adminPanel" style="display:none;">
     
-    <div class="admin-dashboard-layout" id="adminDashboard" style="display:none;">
-        
-        <aside class="sidebar-menu" id="sidebar">
-            <div class="brand">
-                <div class="logo-circle">WiF</div>
-                <h1 class="logo-text">WiFire Conecta</h1>
-            </div>
-            <nav class="nav-links">
-                <button class="nav-item active" data-view="dashboard">Dashboard</button>
-                <button class="nav-item" data-view="users">Usuários</button>
-                <button class="nav-item" data-view="chat">Chat</button>
-                <button class="nav-item" data-view="settings">Configurações</button>
-            </nav>
-            <div class="admin-status">
-                <div class="small-text">Logado como: <strong id="adminName">Administrador</strong></div>
-                <div class="small-text mt-5">Último login: <span id="lastLogin">--</span></div>
-                <button class="btn-secondary mt-10" onclick="logout()">Sair</button>
-            </div>
-        </aside>
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="logo">WiF</div>
+        <div>
+          <h1 class="logo-text">WiFire Conecta</h1>
+          <div class="small">Painel Administrativo</div>
+        </div>
+      </div>
 
-        <main class="main-content">
-            <div class="topbar">
-                <button class="hamburger-menu" id="toggleSidebarBtn" onclick="toggleSidebar()">☰</button>
-                <input id="searchInput" class="search-input" placeholder="Pesquisar..." />
-                <button class="btn" onclick="openNewUser()">Novo Usuário</button>
-            </div>
-            
-            <section id="view-dashboard" class="dashboard-view">
-                </section>
-            
-            <section id="view-users" class="dashboard-view" style="display:none;">
-                </section>
+      <nav class="nav" id="menuNav">
+        <button class="active" data-view="dashboard">Dashboard</button>
+        <button data-view="users">Usuários</button>
+        <button data-view="chat">Chat de Pedidos <span id="notiBadge" style="float:right;background:#ff4d4d;padding:3px 6px;border-radius:8px;color:#fff;font-size:0.8rem;display:none">0</span></button>
+        <button data-view="settings">Configurações</button>
+      </nav>
 
-            </main>
+      <div class="admin-info">
+        <div style="margin-top:14px">Logado como: <strong id="adminName">Administrador</strong></div>
+        <div class="small" style="margin-top:10px">Último login: <span id="lastLogin">--</span></div>
+        <div style="margin-top:12px">
+          <button class="action-btn" onclick="logout()">Sair</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <button class="mobile-toggle" id="toggleSidebarBtn" onclick="toggleSidebar()">☰ Menu</button>
+          <input id="searchInput" class="search" placeholder="Pesquisar usuário, número ou pedido..." />
+        </div>
+        <div class="top-actions">
+          <div class="small">Ambiente: <strong>Produção</strong></div>
+          <button class="btn" onclick="openNewUser()">Novo Usuário</button>
+        </div>
+      </div>
+
+      <section id="view-dashboard" class="view">
+        <div class="card-row">
+          <div class="card">
+            <h3>Usuários Ativos</h3>
+            <div class="value" id="statActive">0</div>
+            <div class="small">Usuários com sessão ativa nas últimas 24h</div>
+          </div>
+          <div class="card">
+            <h3>Assinaturas Ativas</h3>
+            <div class="value" id="statSubs">0</div>
+            <div class="small">Planos ativos</div>
+          </div>
+          <div class="card">
+            <h3>Mensagens (hoje)</h3>
+            <div class="value" id="statMsgs">0</div>
+            <div class="small">Mensagens trocadas</div>
+          </div>
+          <div class="card">
+            <h3>Novos Cadastros (7d)</h3>
+            <div class="value" id="statNew">0</div>
+            <div class="small">Crescimento semanal</div>
+          </div>
+        </div>
+
+        <div class="content-grid">
+          <div class="card">
+            <h3>Atividade</h3>
+            <canvas id="chartActivity" height="160"></canvas>
+          </div>
+
+          <aside class="card">
+            <h3>Resumo Rápido</h3>
+            <div style="margin-top:10px">
+              <div class="small">Total usuários: <strong id="totalUsers">0</strong></div>
+              <div class="small" style="margin-top:8px">Planos: <strong id="planSummary">—</strong></div>
+              <div class="small" style="margin-top:8px">Mensagens totais: <strong id="totalMsgs">0</strong></div>
+              <div style="margin-top:12px">
+                <button class="btn" onclick="syncWithBackend()">Sincronizar (Socket/API)</button>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="view-users" class="view" style="display:none;">
+        <div class="card">
+            <h3>Usuários Cadastrados</h3>
+            <div style="overflow:auto; margin-top:10px">
+                <table id="usersTable">
+                    <thead><tr><th>Nome</th><th>Nº</th><th>Plano</th><th>Status</th><th>Ações</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card" style="margin-top:20px;">
+            <h3>Solicitações Pendentes</h3>
+            <div style="overflow:auto; margin-top:10px">
+                <table id="pendingUsersTable">
+                    <thead><tr><th>Nome</th><th>Nº</th><th>Ações</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+      </section>
+
+      <section id="view-subscriptions" class="view" style="display:none">
+        <div class="card">
+          <h3>Controle de Assinaturas</h3>
+          <div style="margin-top:10px" id="subsList"></div>
+        </div>
+      </section>
+
+      <section id="view-chat" class="view" style="display:none">
+        <div class="card" style="padding:12px; display:flex; gap:12px; flex-direction:column;">
+          <div style="display:flex; gap:12px; flex-direction:row; align-items:flex-start;">
+            <div style="width:280px">
+              <h3>Conversas</h3>
+              <div class="conversations" id="conversationsList"></div>
+            </div>
+            <div style="flex:1; display:flex; flex-direction:column;">
+              <h3 id="chatTitle">Selecione uma conversa</h3>
+              <div class="chat-box" style="margin-top:8px">
+                <div class="messages" id="messagesArea"></div>
+                <div class="chat-input">
+                  <input id="chatInput" placeholder="Digite a mensagem..." />
+                  <button class="btn" onclick="sendMessage()">Enviar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-settings" class="view" style="display:none">
+        <div class="card">
+          <h3>Configurações</h3>
+          <div style="margin-top:12px" class="grid-cols-2">
+            <div>
+              <label class="small">Senha Admin</label>
+              <input id="adminPasswordInput" placeholder="wifire2025" style="width:100%; padding:8px; border-radius:8px; border:none; background:var(--glass); color:#fff" />
+            </div>
+            <div>
+              <label class="small">Endpoint Socket (bot/server)</label>
+              <input id="socketEndpoint" placeholder="http(s)://seu-bot:PORT" style="width:100%; padding:8px; border-radius:8px; border:none; background:var(--glass); color:#fff" />
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <button class="btn" onclick="saveSettings()">Salvar Configurações</button>
+            <button class="action-btn" onclick="tryConnectSocket()" style="margin-left:8px">Conectar Socket</button>
+          </div>
+          <div class="small" style="margin-top:8px; color:var(--muted)">Dica: use o endereço do seu WiFire-bot (ex: https://ip:3000)</div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <div id="adminLoginModal" class="modal" style="display:flex;">
+    <div class="modal-card">
+      <h2 style="color:var(--accent); margin:0 0 12px 0">Login Administrativo</h2>
+      <div style="margin-bottom:8px" class="small">Digite a senha para acessar o painel</div>
+      <input id="adminInput" placeholder="Senha" type="password" style="width:100%; padding:10px; border-radius:8px; border:none; background:var(--glass); color:#fff" />
+      <div id="loginError" style="color:#ff6b6b; margin-top:8px; display:none"></div>
+      <div style="margin-top:12px; display:flex; gap:8px">
+        <button class="btn" onclick="login()">Entrar</button>
+        <a href="index.html" class="action-btn">Voltar</a>
+      </div>
+      <div class="small" style="margin-top:10px; color:var(--muted)">Senha padrão: <strong>wifire2025</strong></div>
     </div>
+  </div>
 
-    <div id="newUserModal" class="modal-window" style="display:none;">...</div>
-    <div id="userProfileModal" class="modal-window" style="display:none;">...</div>
+  <div id="newUserModal" class="modal" style="display:none">
+    <div class="modal-card">
+      <h3>Novo Usuário</h3>
+      <div style="margin-top:10px" class="grid-cols-2">
+        <input id="nuName" placeholder="Nome" />
+        <input id="nuNumber" placeholder="Número" />
+      </div>
+      <div style="margin-top:10px" class="grid-cols-2">
+        <select id="nuPlan">
+          <option value="gratuito">Gratuito</option>
+          <option value="mensal">Mensal</option>
+          <option value="anual">Anual</option>
+        </select>
+        <select id="nuStatus">
+          <option value="active">Ativo</option>
+          <option value="inactive">Inativo</option>
+        </select>
+      </div>
+      <div style="margin-top:12px; text-align:right">
+        <button class="action-btn" onclick="closeNewUser()">Cancelar</button>
+        <button class="btn" onclick="createUser()">Criar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="userProfileModal" class="modal" style="display:none">
+    <div class="modal-card">
+      <h3 id="profileName">Carregando...</h3>
+      <div style="margin-top:12px; font-size:0.9rem">
+        <div><strong>Nº:</strong> <span id="profileNumber">--</span></div>
+        <div style="margin-top:6px"><strong>Plano:</strong> <span id="profilePlan">--</span></div>
+        <div style="margin-top:6px"><strong>Status:</strong> <span id="profileStatus">--</span></div>
+        <div style="margin-top:6px"><strong>Cadastro:</strong> <span id="profileCreated">--</span></div>
+      </div>
+      <div style="margin-top:16px; text-align:right">
+        <button class="action-btn" onclick="closeUserProfile()">Fechar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="script.js"></script>
