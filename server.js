@@ -85,8 +85,7 @@ io.on('connection', (socket) => {
     pendingUsers.push(newPendingUser);
     saveData(DATA_FILES.pendingUsers, pendingUsers);
     
-    // Notificar o admin via Telegram (usando seu ID do Telegram)
-    const adminChatId = 7815317599; // Substitua pelo seu chat ID do Telegram
+    const adminChatId = 7815317599;
     const message = `Novo usuário pendente de aprovação: ${name}, WhatsApp: ${phone}`;
     bot.telegram.sendMessage(adminChatId, message);
 
