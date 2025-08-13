@@ -167,6 +167,7 @@ function updateStats(){
   document.getElementById('statMsgs').textContent = convs.reduce((s,c)=>s+c.messages.filter(m=> (Date.now()-m.time) < 86400000).length,0);
   document.getElementById('statNew').textContent = users.filter(u=> (Date.now()-u.created) < 7*86400000).length;
   document.getElementById('totalUsers').textContent = users.length;
+  document.getElementById('totalMsgs').textContent = convs.reduce((s,c)=>s+c.messages.length,0);
   const planSummary = users.reduce((acc,u)=>{ acc[u.plano]=(acc[u.plano]||0)+1; return acc; },{});
   document.getElementById('planSummary').textContent = Object.entries(planSummary).map(e=>e.join(':')).join(' • ');
 }
@@ -230,25 +231,7 @@ function updateNotificationBadge(){ const convs = readConvs(); const totalUnread
 function notify(title, body){ if(!("Notification" in window)) return; if(Notification.permission === "granted"){ new Notification(title,{body}); } else if(Notification.permission !== "denied"){ Notification.requestPermission().then(p=>{ if(p==='granted') new Notification(title,{body}); }); } }
 
 /* ---------- Socket.IO integration ---------- */
-function saveSettings(){
-  try {
-    const s = readSettings();
-    const newPass=document.getElementById('adminPasswordInput').value.trim();
-    const socketUrl=document.getElementById('socketEndpoint').value.trim();
-    if(newPass) s.adminPass=newPass;
-    s.socketEndpoint=socketUrl;
-    localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(s));
-    alert('Configurações salvas.');
-    console.log('Configurações salvas no localStorage.');
-  } catch(e) {
-    console.error('Erro ao salvar no localStorage:', e);
-    alert('Erro ao salvar as configurações. Verifique o console.');
-  }
-  if(socketUrl) {
-    SOCKET_ENDPOINT = socketUrl;
-    tryConnectSocket();
-  }
-}
+function saveSettings(){ const s = readSettings(); const newPass=document.getElementById('adminPasswordInput').value.trim(); const socketUrl=document.getElementById('socketEndpoint').value.trim(); if(newPass) s.adminPass=newPass; s.socketEndpoint=socketUrl; saveSettings(s); alert('Configurações salvas.'); if(socketUrl) { SOCKET_ENDPOINT = socketUrl; tryConnectSocket(); } }
 function tryConnectSocket(){ const s = readSettings(); const endpoint = document.getElementById('socketEndpoint').value.trim() || s.socketEndpoint || ''; if(!endpoint) return alert('Defina o endpoint do socket nas configurações.'); SOCKET_ENDPOINT = endpoint; connectSocket(SOCKET_ENDPOINT); }
 
 function connectSocket(url){
@@ -286,50 +269,23 @@ function syncWithBackend(){
 }
 
 /* ---------- Init ---------- */
-document.addEventListener('DOMContentLoaded', ()=>{
-  const isLoggedIn = localStorage.getItem(STORAGE_KEYS.loggedIn) === 'true';
-  if (isLoggedIn) {
-    document.getElementById('adminPanel').style.display = 'flex';
-    document.getElementById('userLanding').style.display = 'none';
-    const settings = readSettings();
-    if(settings.socketEndpoint) { 
-      SOCKET_ENDPOINT = settings.socketEndpoint; 
-      connectSocket(SOCKET_ENDPOINT); 
-    }
-  } else {
-    document.getElementById('adminPanel').style.display = 'none';
-    document.getElementById('userLanding').style.display = 'flex';
-  }
-  
-  initPanel();
-  document.getElementById('searchInput').addEventListener('input', (e)=>filterUsers(e.target.value));
-  const s = readSettings(); 
-  if(s.socketEndpoint) document.getElementById('socketEndpoint').value = s.socketEndpoint; 
-  if(s.adminPass) document.getElementById('adminPasswordInput').value = s.adminPass;
-  if(s.socketEndpoint) { 
-    SOCKET_ENDPOINT = s.socketEndpoint; 
-    connectSocket(SOCKET_ENDPOINT); 
-  }
-});
 function initPanel(){
-  renderUsersTable(); renderSubscriptions(); renderConversations(); initDashboard();
+  renderUsersTable(); renderSubscriptions(); renderConversations(); selectConversation(); initDashboard();
+  document.getElementById('searchInput').addEventListener('input', (e)=>filterUsers(e.target.value));
+  const s = readSettings(); if(s.socketEndpoint) document.getElementById('socketEndpoint').value = s.socketEndpoint; if(s.adminPass) document.getElementById('adminPasswordInput').value = s.adminPass;
+  if(s.socketEndpoint) { SOCKET_ENDPOINT = s.socketEndpoint; connectSocket(SOCKET_ENDPOINT); }
 }
 function filterUsers(q){ q = q.trim().toLowerCase(); document.querySelectorAll('#usersTable tbody tr').forEach(r=>{ const txt = r.textContent.toLowerCase(); r.style.display = txt.includes(q) ? '' : 'none'; }); }
 
 /* ---------- Utilities ---------- */
-// document.addEventListener('DOMContentLoaded', ()=>{ /* nothing auto */ });
+document.addEventListener('DOMContentLoaded', ()=>{ /* nothing auto */ });
 
 /* ---------- localStorage wrappers ---------- */
 function readUsers(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]'); }
 function saveUsers(u){ localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(u)); }
 function readConvs(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.convs) || '[]'); }
 function saveConvs(c){ localStorage.setItem(STORAGE_KEYS.convs, JSON.stringify(c)); }
-function readSettings(){
-  const s = localStorage.getItem(STORAGE_KEYS.settings);
-  if (s === 'undefined' || s === null || s === '') return {};
-  try { return JSON.parse(s); }
-  catch(e) { return {}; }
-}
+function readSettings(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.settings) || '{}'); }
 function saveSettings(s){ localStorage.setItem(STORAGE_KEYS.settings, JSON.stringify(s)); }
 
 /* END */
