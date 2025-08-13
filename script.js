@@ -4,7 +4,7 @@
 
 const STORAGE_KEYS = { users:'wf_users_v1', convs:'wf_convs_v1', settings:'wf_settings_v1', loggedIn:'wf_logged_in_v1' };
 let socket = null;
-let SOCKET_ENDPOINT = '';
+let SOCKET_ENDPOINT = 'https://presented-encourage-nigeria-bone.trycloudflare.com';
 
 /* ---------- Funções de Helper ---------- */
 function readUsers(){ return JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || '[]'); }
@@ -42,7 +42,40 @@ function renderConversations(){
 function showView(name){
   // Lógica para mostrar as diferentes seções do painel
 }
-
+function connectSocket(endpoint) {
+    if (socket && socket.connected) {
+        console.log("Socket já conectado.");
+        return;
+    }
+    if (!endpoint) {
+        console.error("Nenhum endpoint de socket fornecido.");
+        return;
+    }
+    console.log(`Conectando ao socket em: ${endpoint}`);
+    socket = io(endpoint);
+    socket.on('connect', () => {
+        console.log('Socket conectado com sucesso!');
+        socket.emit('sync:request');
+    });
+    socket.on('disconnect', () => {
+        console.log('Socket desconectado.');
+    });
+    socket.on('users:update', (updatedUsers) => {
+        console.log("Usuários atualizados recebidos:", updatedUsers);
+        saveUsers(updatedUsers);
+        renderUsersTable();
+        updateStats();
+    });
+    socket.on('convs:update', (updatedConvs) => {
+        console.log("Conversas atualizadas recebidas:", updatedConvs);
+        saveConvs(updatedConvs);
+        renderConversations();
+    });
+    socket.on('message:new', (data) => {
+        console.log("Nova mensagem recebida:", data);
+        // Lógica para atualizar a conversa específica
+    });
+}
 /* ---------- Lógica de Autenticação e Navegação ---------- */
 function toggleSidebar(){
   const sb = document.getElementById('sidebar');
@@ -83,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const page = window.location.pathname.split('/').pop();
     if (page === 'admin.html') {
         if (localStorage.getItem(STORAGE_KEYS.loggedIn) === 'true') {
-            document.getElementById('adminPanel').style.display = 'flex';
+            document.getElementById('adminDashboard').style.display = 'flex';
             const settings = readSettings();
             SOCKET_ENDPOINT = settings.socketEndpoint || SOCKET_ENDPOINT;
             connectSocket(SOCKET_ENDPOINT);
