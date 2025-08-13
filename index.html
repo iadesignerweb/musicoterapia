@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>WiFire Conecta</title>
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.2/dist/socket.io.min.js"></script>
+</head>
+<body>
+
+<div id="landingPage">
+  <div class="landing-container">
+    <h1>WiFire Conecta</h1>
+    <p>Bem-vindo ao nosso Hotspot Social! Conecte-se para ter acesso Wi-Fi grátis e seguro.</p>
+    
+    <div class="user-login-form">
+      <h3>Conectar como Usuário</h3>
+      <input type="text" id="userName" placeholder="Seu Nome" />
+      <input type="tel" id="userPhone" placeholder="Seu WhatsApp (apenas números)" />
+      <button class="btn" onclick="requestUserAccess()">Solicitar Acesso</button>
+      <div id="userMessage" class="small" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="admin-link">
+      <a href="admin.html">Acesso Administrativo</a>
+    </div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
