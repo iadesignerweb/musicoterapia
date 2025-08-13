@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>WiFire Conecta</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="landing-page" class="flex-center">
+    <div class="card-login">
+        <div class="logo-circle">WiF</div>
+        <h1>WiFire Conecta</h1>
+        <p>Acesso Wi-Fi grátis e seguro.</p>
+        
+        <div class="user-login-form">
+            <input type="text" id="userName" placeholder="Seu Nome" class="input-field" />
+            <input type="tel" id="userPhone" placeholder="Seu WhatsApp" class="input-field" />
+            <button class="btn" onclick="requestUserAccess()">Conectar</button>
+            <div id="userMessage" class="small-text mt-10"></div>
+        </div>
+
+        <div class="admin-link mt-20">
+            <a href="admin.html">Acesso Administrativo</a>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
