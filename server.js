@@ -29,3 +29,4 @@ const PORT = 3000;
 server.listen(PORT, () => {
   console.log(`Servidor Socket.IO e Bot Telegram rodando na porta ${PORT}`);
 });
+
