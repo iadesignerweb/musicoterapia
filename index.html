@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutor - Plataforma EAD Completa para Seu Negócio</title>
+
+    <meta name="description" content="Conheça a Tutor, a plataforma para gestão e vendas de cursos online ou presenciais mais completa do mercado. Soluções para cursos livres, preparatórios, corporativo e instituições de ensino.">
+    <meta name="keywords" content="PlataformaEAD, CursoOnline, GestaoDeCursos, Tutor, VendaDeCursos, EnsinoADistancia, EAD, CursosLivres, CursosPreparatorios, EducacaoCorporativa">
+    <meta name="author" content="Plinio Studio">
+    <meta property="og:title" content="Tutor - A Plataforma EAD Definitiva">
+    <meta property="og:description" content="Conheça a solução mais completa do mercado para gestão de cursos a distância e presenciais.">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tutor - A Plataforma EAD Definitiva">
+    <meta name="twitter:description" content="Conheça a solução mais completa do mercado para gestão de cursos a distância e presenciais.">
+
+    <style>
+        /* Estilos Globais e Reset */
+        :root {
+            --primary-color: #082A9D; /* Azul escuro principal da Tutor */
+            --primary-light: #4A90E2; /* Azul mais claro para gradientes */
+            --secondary-color: #00CD0A; /* Verde dos botões CTA */
+            --accent-color: #FFC107; /* Amarelo para detalhes (ocasional) */
+            --text-color: #333333;
+            --light-text-color: #ffffff;
+            --bg-light: #fdfdfd;
+            --bg-neutral: #f8f9fa;
+            --bg-dark: #212529;
+            --card-bg: #ffffff;
+            --border-color: #eeeeee;
+            --font-family: 'Poppins', 'Segoe UI', 'Roboto', sans-serif;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --transition-speed: 0.4s ease-in-out;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-light);
+            overflow-x: hidden;
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--light-text-color);
+            padding: 15px 0;
+            box-shadow: var(--box-shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        .hamburger-menu {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .hamburger-menu .bar {
+            width: 30px;
+            height: 3px;
+            background-color: var(--primary-color);
+            margin: 5px 0;
+            transition: var(--transition-speed);
+        }
+
+        nav {
+            display: flex;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 0;
+            position: relative;
+            transition: color var(--transition-speed);
+        }
+
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 0;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 2px;
+            transition: width var(--transition-speed);
+        }
+        
+        nav ul li a:hover, nav ul li a.active { color: var(--primary-color); }
+        nav ul li a:hover::after, nav ul li a.active::after { width: 100%; }
+        
+        /* Seções */
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero {
+            background: linear-gradient(rgba(8, 42, 157, 0.9), rgba(8, 42, 157, 0.8)), url('https://images.unsplash.com/photo-1543269865-cbf427effbad?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb&w=1600') no-repeat center center/cover;
+            color: var(--light-text-color);
+            text-align: center;
+            padding: 120px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.4);
+            line-height: 1.2;
+            max-width: 900px;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.4em;
+            margin-bottom: 40px;
+            max-width: 800px;
+            opacity: 0.95;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--light-text-color);
+            padding: 16px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+            box-shadow: 0 4px 15px rgba(0, 205, 10, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 205, 10, 0.4);
+        }
+        
+        .btn-nav {
+             padding: 12px 25px;
+             font-size: 1em;
+        }
+
+        h2 {
+            font-size: 3em;
+            color: var(--primary-color);
+            text-align: center;
+            margin-bottom: 60px;
+            position: relative;
+            font-weight: 700;
+        }
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -15px;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 5px;
+            background-color: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+        /* Vantagens (Services Grid) */
+        .vantagens-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .vantagem-card {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            text-align: center;
+            transition: transform var(--transition-speed), box-shadow var(--transition-speed);
+            border: 1px solid var(--border-color);
+        }
+
+        .vantagem-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        /* ALTERAÇÃO: Estilo para o ícone SVG */
+        .vantagem-card .icon {
+            height: 60px;
+            width: 60px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        .vantagem-card h3 {
+            font-size: 1.6em;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        /* Content Box para Sobre e Para Quem é */
+        .content-box {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+        .content-box .text-content { flex: 1; }
+        .content-box .image-content { flex: 1; text-align: center; }
+        .content-box .image-content img { max-width: 100%; border-radius: var(--border-radius); }
+        .content-box h3 { font-size: 1.8em; margin-bottom: 15px; color: var(--primary-color); }
+        #para-quem-e ul { list-style: none; padding-left: 0; }
+        #para-quem-e ul li { background: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300CD0A"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>') no-repeat left center; background-size: 24px; padding-left: 35px; font-size: 1.2em; margin-bottom: 15px; }
+
+        /* Banner de Prova Social */
+        .social-proof {
+            background-color: var(--primary-color);
+            color: var(--light-text-color);
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .social-proof h2 {
+            color: var(--light-text-color);
+            font-size: 2.5em;
+            margin: 0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .social-proof h2::after { display: none; }
+
+        /* Depoimentos */
+        .depoimentos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        .depoimento-card {
+            background-color: var(--bg-neutral);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            border-left: 5px solid var(--primary-color);
+            display: flex;
+            flex-direction: column;
+        }
+        .depoimento-card .quote {
+            flex-grow: 1;
+            font-style: italic;
+            color: #555;
+            margin-bottom: 20px;
+            position: relative;
+            padding-left: 30px;
+        }
+        .depoimento-card .quote::before {
+            content: '“';
+            font-size: 3em;
+            position: absolute;
+            left: -5px;
+            top: -15px;
+            color: var(--primary-light);
+            opacity: 0.5;
+        }
+        .depoimento-card .author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .depoimento-card .author img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .depoimento-card .author-info strong {
+            display: block;
+            font-weight: 700;
+        }
+        .depoimento-card .author-info span {
+            font-size: 0.9em;
+            color: #777;
+        }
+        
+        /* Formulários e Inputs */
+        form {
+            background-color: var(--card-bg);
+            padding: 35px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            max-width: 600px;
+            margin: 40px auto;
+            border: 1px solid var(--border-color);
+        }
+        form label { display: block; margin-bottom: 8px; font-weight: bold; }
+        form input, form select, form textarea {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1em;
+            transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+        }
+        form input:focus, form select:focus, form textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(8, 42, 157, 0.2);
+        }
+
+        /* Rodapé */
+        footer {
+            background-color: var(--bg-dark);
+            color: #ccc;
+            padding: 50px 0;
+            margin-top: auto;
+            text-align: center;
+        }
+        .footer-content { max-width: 700px; margin: 0 auto; }
+        .footer-content h3 { font-size: 2em; color: var(--light-text-color); margin-bottom: 15px; }
+        .footer-content p { line-height: 1.8; margin-bottom: 20px; }
+        .footer-content a { color: var(--secondary-color); text-decoration: none; font-weight: 500; }
+        .footer-content a:hover { text-decoration: underline; }
+        .copyright { margin-top: 40px; font-size: 0.9em; color: #888; border-top: 1px solid #444; padding-top: 30px; }
+
+        /* Responsividade */
+        @media (max-width: 992px) {
+            nav {
+                display: none;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background-color: var(--light-text-color);
+                box-shadow: var(--box-shadow);
+            }
+            nav.active { display: block; }
+            nav ul { flex-direction: column; gap: 0; }
+            nav ul li { text-align: center; border-bottom: 1px solid var(--border-color); }
+            nav ul li:last-child { border-bottom: none; }
+            nav ul li a { display: block; padding: 15px 0; width: 100%; }
+            nav ul li a:hover, nav ul li a.active { background-color: var(--bg-neutral); }
+            .hamburger-menu { display: flex; }
+            .content-box { flex-direction: column; text-align: center; }
+        }
+
+        @media (max-width: 768px) {
+            .logo { font-size: 1.7em; }
+            .hero h1 { font-size: 2.8em; }
+            .hero p { font-size: 1.2em; }
+            h2 { font-size: 2.2em; }
+            section { padding: 60px 0; }
+            .depoimentos-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <a href="#hero" class="logo">Tutor</a>
+            <div class="hamburger-menu" id="hamburger-menu">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <nav id="main-nav">
+                <ul>
+                    <li><a href="#sobre">Sobre</a></li>
+                    <li><a href="#vantagens">Vantagens</a></li>
+                    <li><a href="#para-quem-e">Para Quem é</a></li>
+                    <li><a href="#depoimentos">Depoimentos</a></li>
+                    <li><a href="#contato" class="btn btn-nav">Quero Mais Informações</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="hero" class="hero">
+            <h1>A Plataforma Para Cursos Online e Presenciais Mais Completa do Mercado</h1>
+            <p>Temos soluções com o melhor custo/benefício para Cursos Livres, Cursos Preparatórios, Corporativo e Instituições de Ensino.</p>
+            <a href="#contato" class="btn">Reduza Custos e Fature Mais!</a>
+        </section>
+
+        <section id="sobre">
+            <div class="container content-box">
+                 <div class="image-content">
+                    <img src="https://img.freepik.com/fotos-gratis/vista-traseira-do-empresario-que-fala-com-seus-colegas-em-um-seminario-em-uma-sala-de-conselho_637285-1881.jpg?w=1060" alt="Equipe discutindo sobre a plataforma Tutor">
+                </div>
+                <div class="text-content">
+                    <h2>Sobre a Tutor</h2>
+                    <p>Tutor é a solução mais completa do mercado para gestão de cursos a distância e presenciais. Com diversas funcionalidades integradas, nossa plataforma tem tudo que você precisa para conquistar e fidelizar cada vez mais alunos.</p>
+                    <p>Aqui você consegue centralizar toda a gestão em um mesmo lugar, sem a necessidade de contratar várias ferramentas. Atuamos em 3 áreas da educação: Cursos Livres (EAD e Presencial), Corporativo e Escolas. Somos o parceiro que a sua empresa precisa para escalar os resultados.</p>
+                    <a href="#contato" class="btn">Quero saber mais sobre a Tutor</a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="vantagens" style="background-color: var(--bg-neutral);">
+            <div class="container">
+                <h2>Principais Vantagens</h2>
+                <div class="vantagens-grid">
+                    <div class="vantagem-card">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+                        <h3>Estabilidade e Segurança</h3>
+                        <p>Trabalhamos com a mais alta tecnologia para atender bem empresas de todos os portes com total segurança.</p>
+                    </div>
+                    <div class="vantagem-card">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.08-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>
+                        <h3>Automação de Processos</h3>
+                        <p>Ganhe mais produtividade e proporcione a melhor experiência ao usuário com mais agilidade em suas operações.</p>
+                    </div>
+                    <div class="vantagem-card">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4c-1.11 0-2 .9-2 2v12c0 1.1.89 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 18V6h2v12H4zm4 0V6h2v12H8zm4 0V6h2v12h-2zm4 0V6h2v12h-2z"/></svg>
+                        <h3>Mais Gestão e Vendas</h3>
+                        <p>Nosso sistema integrado de gestão foi projetado para você ter mais controle, performance e escalar suas vendas.</p>
+                    </div>
+                    <div class="vantagem-card">
+                        <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 17.01V10h-2v7.01h-3L15 21l4-3.99h-3zM9 3L5 6.99h3V14h2V6.99h3L9 3z"/></svg>
+                        <h3>Migração Segura e Fácil</h3>
+                        <p>Nossa equipe está 100% à disposição para ajudar de forma segura com a migração de outras plataformas.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="para-quem-e">
+            <div class="container content-box">
+                <div class="text-content">
+                    <h2>Para quem é a Tutor?</h2>
+                    <ul>
+                        <li>Produtores de cursos livres e preparatórios</li>
+                        <li>Instituições de Ensino</li>
+                        <li>Empresas (para Reuniões e Treinamentos)</li>
+                    </ul>
+                    <a href="#contato" class="btn">Quero Saber Mais</a>
+                </div>
+                <div class="image-content">
+                    <img src="https://img.freepik.com/fotos-gratis/empresaria-asiatica-trabalhando-no-laptop-em-seu-escritorio_23-2148878912.jpg?w=1060" alt="Pessoas em uma vídeo chamada de treinamento">
+                </div>
+            </div>
+        </section>
+        
+        <section class="social-proof">
+            <div class="container">
+                <h2>Junte-se a mais de 300 empresas que estão investindo no futuro da educação</h2>
+            </div>
+        </section>
+
+        <section id="depoimentos">
+            <div class="container">
+                <h2>O que nossos parceiros dizem</h2>
+                <div class="depoimentos-grid">
+                    <div class="depoimento-card">
+                        <p class="quote">A plataforma Tutor chegou para atender todas as demandas que precisávamos para oferecer um serviço completo aos nossos alunos - das diversas formas de pagamento ao acompanhamento do conteúdo, recursos de atendimento e acesso às informações, a Tutor está ao nosso lado com comprometimento e qualidade.</p>
+                        <div class="author">
+                            <img src="https://img.freepik.com/fotos-gratis/homem-de-negocios-alegre-de-meia-idade-com-bracos-cruzados_1262-17765.jpg?w=996" alt="Foto de Júlio">
+                            <div class="author-info">
+                                <strong>Júlio</strong>
+                                <span>CEO da SUMPREMO</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="depoimento-card">
+                        <p class="quote">Esse ano estamos completando 12 anos, isso mesmo, estamos há mais de uma década transformando vidas e ajudando as pessoas a realizarem os seus sonhos e o Tutor faz parte dessa grande história.</p>
+                        <div class="author">
+                            <img src="https://img.freepik.com/fotos-gratis/mulher-de-negocios-senior-com-cabelos-grisalhos-em-pe-contra-a-parede-branca-no-escritorio-usando-oculos_1098-20239.jpg?w=996" alt="Foto de Joelma">
+                            <div class="author-info">
+                                <strong>Joelma</strong>
+                                <span>Sócia/Administradora no CEJURIS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contato" style="background-color: var(--bg-neutral);">
+            <div class="container">
+                <h2>Venha conhecer em detalhes a Tutor</h2>
+                <p style="text-align: center; max-width: 600px; margin: -40px auto 40px;">Preencha os campos abaixo para receber mais informações e dar o próximo passo para escalar seu negócio educacional.</p>
+                <form id="contact-form">
+                    <div class="form-group">
+                        <label for="nome">Nome*</label>
+                        <input type="text" id="nome" name="nome" placeholder="Digite seu nome completo" required>
+                    </div>
+                     <div class="form-group">
+                        <label for="email">Email*</label>
+                        <input type="email" id="email" name="email" placeholder="seu.email@exemplo.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="whatsapp">Whatsapp* (com DDD)</label>
+                        <input type="tel" id="whatsapp" name="whatsapp" placeholder="Ex: 87999998888" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="perfil">Escolha a opção que melhor te define:*</label>
+                        <select id="perfil" name="perfil" required>
+                            <option value="" disabled selected>Selecione</option>
+                            <option value="Sou uma empresa">Sou uma empresa</option>
+                            <option value="Sou uma instituição de ensino">Sou uma instituição de ensino</option>
+                            <option value="Sou produtor de cursos livres">Sou produtor de cursos livres</option>
+                            <option value="Sou produtor de cursos preparatórios">Sou produtor de cursos preparatórios</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                         <label for="desafio">Fale sobre o seu principal problema/desafio:</label>
+                         <textarea id="desafio" name="desafio" rows="4" placeholder="Ex: Preciso de uma plataforma estável para muitos alunos."></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width: 100%;">QUERO MAIS INFORMAÇÕES</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container footer-content">
+            <h3>Quem Somos</h3>
+            <p><strong>Plinio Studio</strong> é uma empresa Pernambucana especializada em SEO, design, criatividade, audiovisual e mais. Nossa missão é transformar ideias em realidade digital, utilizando as mais recentes tecnologias de inteligência artificial para impulsionar a presença online dos clientes.</p>
+            <p>Criamos soluções personalizadas, desde o design de sites/aplicativos até a produção de conteúdo audiovisual que engaja e converte.</p>
+            <p>
+                Acompanhe nossos projetos e tutoriais: <a href="https://youtube.com/@pliniostudio_" target="_blank">youtube.com/@pliniostudio_</a><br>
+                Seja parceiro ou adquira serviços: <a href="https://wa.me/5587999786261" target="_blank">(87) 99978-6261</a>
+            </p>
+             <div class="copyright">
+                Copyright © 2025 - Plinio Studio | Todos os direitos reservados
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const hamburgerMenu = document.getElementById('hamburger-menu');
+            const mainNav = document.getElementById('main-nav');
+
+            hamburgerMenu.addEventListener('click', () => {
+                mainNav.classList.toggle('active');
+            });
+            
+            document.querySelectorAll('#main-nav a').forEach(link => {
+                link.addEventListener('click', () => {
+                     if (window.innerWidth <= 992) {
+                        mainNav.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Formulário de Contato
+            const contactForm = document.getElementById('contact-form');
+            if(contactForm) {
+                contactForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const nome = document.getElementById('nome').value;
+                    const email = document.getElementById('email').value;
+                    const whatsapp = document.getElementById('whatsapp').value;
+                    const perfil = document.getElementById('perfil').value;
+                    const desafio = document.getElementById('desafio').value;
+
+                    const message = encodeURIComponent(
+                        `Olá! Meu nome é ${nome} (${email}).\n` +
+                        `Meu WhatsApp é: ${whatsapp}\n` +
+                        `Meu perfil é: ${perfil}\n` +
+                        `Meu principal desafio é: ${desafio}\n\n` +
+                        `Gostaria de receber mais informações sobre a plataforma Tutor.`
+                    );
+                    
+                    const whatsappURL = `https://wa.me/5587999786261?text=${message}`;
+                    
+                    window.open(whatsappURL, '_blank');
+                    alert('Você será redirecionado para o WhatsApp para enviar sua solicitação!');
+                    contactForm.reset();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+
